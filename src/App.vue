@@ -19,7 +19,7 @@ const baseURL = inject("baseURL")
           头部
         </el-header>
         <el-container class=" h-full">
-          <el-aside width="200px" class="h-full">
+          <el-aside width="max-content" class="h-full">
             <LeftMenu class="h-full"></LeftMenu>
           </el-aside>
           <el-main>
