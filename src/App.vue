@@ -3,8 +3,8 @@ import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import { RouterLink, RouterView } from 'vue-router'
 import Login from './components/Login.vue'
-import LeftMenu from './components/LeftMenu.vue'
-import { Fragment } from "vue";
+import LeftMenuForFirm from './components/LeftMenuForFirm.vue'
+import TopBar from './components/TopBar.vue'
 const { userInfo } = storeToRefs(useUserInfoStore())
 const baseURL = inject("baseURL")
 </script>
@@ -16,11 +16,11 @@ const baseURL = inject("baseURL")
     <div class="common-layout  w-full h-full absolute">
       <el-container class=" w-full h-full">
         <el-header class=" border-y-2">
-          头部
+          <TopBar></TopBar>
         </el-header>
         <el-container class=" h-full">
           <el-aside width="max-content" class="h-full">
-            <LeftMenu class="h-full"></LeftMenu>
+            <LeftMenuForFirm class="h-full"></LeftMenuForFirm>
           </el-aside>
           <el-main>
             <RouterView />

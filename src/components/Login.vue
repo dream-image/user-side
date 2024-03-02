@@ -6,8 +6,8 @@
         <div id="wrapper">
           <div class="title-wrapper">
             <div id="left"></div>
-            <div style="font-size: 20px;text-wrap: nowrap;width: max-content;">
-              <h1 style="text-align: left;margin: 0;margin-left: 5px;">欢迎登陆</h1>
+            <div style="font-size: 30px;text-wrap: nowrap;width: max-content;">
+              <h1 style="text-align: left;margin: 0;margin-left: 10px;line-height: 60px;">欢迎登陆</h1>
             </div>
           </div>
           <div style="
@@ -192,7 +192,7 @@ onMounted(() => {
       border: 1px solid gray;
       box-shadow: 4px 4px 6px #868e96;
       width: 2px;
-      height: 50px;
+      height: 60px;
       position: relative;
       top: 0;
       bottom: 0;
