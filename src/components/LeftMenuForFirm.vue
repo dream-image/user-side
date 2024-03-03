@@ -1,5 +1,5 @@
 <script>
-import { ref } from 'vue'
+import { ref,watch } from 'vue'
 import {
     Menu as IconMenu,
 } from '@element-plus/icons-vue'
@@ -14,10 +14,15 @@ export default {
         const routerGo=(target)=>{
             router.replace({ path: target })
         }
+        const active = ref()
+        watch(route,(value)=>{
+            active.value = value.path
+        })
         return {
             isCollapse,
             routerGo,
-            router
+            router,
+            active
         }
     },
     mounted() {
@@ -32,7 +37,7 @@ export default {
     },
     unmounted() {
         ob.disconnect()
-    }
+    },
 }
 
 
@@ -41,10 +46,10 @@ export default {
 </script>
 
 <template>
-    <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse" >
-        <el-menu-item index="1" @click="routerGo('bourse')">
+    <el-menu :default-active="active" class="el-menu-vertical-demo" :collapse="isCollapse"  router style="user-select: none;">
+        <el-menu-item index="/bourse" >
             <el-icon>
-                <location />
+                <coin />
             </el-icon>
             <template #title>
                 交易所
@@ -57,13 +62,13 @@ export default {
                 <span>碳核算</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item index="2-1"  @click="routerGo('submit-data')" >提交资料</el-menu-item>
+                <el-menu-item index="submit-data"  >提交资料</el-menu-item>
             </el-menu-item-group>
             <el-menu-item-group>
-                <el-menu-item index="2-2"  @click="routerGo('history')">历史记录</el-menu-item>
+                <el-menu-item index="firm-history">历史记录</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
-        <el-menu-item index="3"  @click="routerGo('infomation')"> 
+        <el-menu-item index="infomation"  > 
             <el-icon>
                 <document />
             </el-icon>

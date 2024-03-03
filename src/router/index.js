@@ -1,13 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomePage from '@/views/HomePage.vue'
+import HomePage from '@/views/firm/HomePage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      redirect: '/bourse'
-    },
     {
       path: '/bourse',
       name: 'bourse',
@@ -16,19 +12,28 @@ const router = createRouter({
     {
       path: '/submit-data',
       name: 'submit-data',
-      component: () => import('@/views/CarbonAccount/SubmitData.vue')
+      component: () => import('@/views/firm/CarbonAccount/SubmitData.vue')
     },
     {
-      path: '/history',
-      name: 'history',
-      component: () => import('@/views/CarbonAccount/History.vue')
+      path: '/firm-history',
+      name: 'firm-history',
+      component: () => import('@/views/firm/CarbonAccount/History.vue')
     },
     {
       path: '/infomation',
       name: 'infomation',
-      component: () => import('@/views/Infomation.vue')
+      component: () => import('@/views/firm/Infomation.vue')
     },
-
+    {
+      path: '/audit',
+      name: 'audit',
+      component: () => import('@/views/auditor/Audit.vue')
+    },
+    {
+      path: '/auditor-history',
+      name: "auditor-history",
+      component: () => import('@/views/auditor/History.vue')
+    },
   ]
 })
 

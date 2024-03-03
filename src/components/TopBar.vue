@@ -1,5 +1,7 @@
 <script setup>
-
+import { useUserInfoStore } from "@/stores/user"
+import { storeToRefs } from "pinia";
+const { userInfo } = storeToRefs(useUserInfoStore())
 </script>
 
 <template>
@@ -13,7 +15,8 @@
             <div style="flex-grow:1;width: 100px;display: flex;align-items: center;height: 100%;position: absolute;right: 0;">
                 <img src="@/assets/提醒.svg" style="height: 20px;margin-right: 5px;" alt="提醒">
                 <div>
-                    <img src="@/assets/企业.svg" style="height:100%;border-radius:50%;border:1px solid black;" alt="企业">
+                    <img src="@/assets/企业.svg" style="height:100%;border-radius:50%;border:1px solid black;" alt="企业" v-if="userInfo.identity==='firm'">
+                    <img src="@/assets/审核员.svg" style="height:100%;border-radius:50%;border:1px solid black;" alt="审核员" v-if="userInfo.identity==='auditor'">
                 </div>
             </div>
         </div>

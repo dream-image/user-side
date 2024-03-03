@@ -64,9 +64,12 @@ const props = defineProps({
       return /^(((ht|f)tps?):\/\/)?([^!@#$%^&*?.\s-]([^!@#$%^&*?.\s]{0,63}[^!@#$%^&*?.\s])?\.)+[a-z]{2,6}\/?/.test(value);
     }
   },
-  isDeveloperMode: {
-    type: [Boolean, String],
-    default: false,
+  developerMode: {
+    type: Object,
+    default: {
+      isDeveloper: false,
+      identity:"firm"
+    },
   }
 })
 const leftDom = ref(null)
@@ -93,11 +96,12 @@ onMounted(() => {
 })
 async function login() {
 
-  if (props.isDeveloperMode) {
+  if (props.developerMode.isDeveloper) {
     userInfo.value.isLogin = true
     userInfo.value.token = "token"
+    userInfo.value.identity=props.developerMode.identity   //通过这个字段来判断是哪个身份 要么是 firm 企业  要么是 auditor 审核员
     localStorage.setItem("userInfo", JSON.stringify(userInfo.value))
-    console.log(userInfo.value)
+    // console.log(userInfo.value)
     return
   }
   try {
@@ -109,6 +113,7 @@ async function login() {
     if (res.data.code == 200) {
       userInfo.value.isLogin = true
       userInfo.value.token = res.data.token
+      userInfo.value.identity=res.data.identity
       localStorage.setItem("userInfo", JSON.stringify(userInfo.value))
       return
 
