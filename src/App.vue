@@ -12,7 +12,7 @@ const baseURL = inject("baseURL")
 
 <template>
   <!-- 登陆页 -->
-  <Login :url="baseURL + '/login'" v-if="!userInfo.isLogin" :developerMode="{'isDeveloper':true,'identity':'firm'}"></Login> 
+  <Login :url="baseURL + '/login'" v-if="!userInfo.isLogin" :developerMode="{'isDeveloper':true,'identity':'auditor'}"></Login> 
   <!-- {'isDeveloper':true,'identity':'firm'} 传入这个后直接点击登录即可，identity如果是firm就进入企业页面 如果是 auditor就进入审核员页面 -->
 
   <div v-else>

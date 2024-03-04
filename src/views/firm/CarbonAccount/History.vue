@@ -6,7 +6,7 @@ const tableData = [
         submitDate: "2012/01/14",
         auditDate: "2012/03/04",
         auditResult: "不通过",
-        state: "不通过",
+        status: "不通过",
         carbonCredits: "200",
         expendCarbon: "18",
         reallyGetCarbon: "182",
@@ -17,7 +17,7 @@ const tableData = [
         submitDate: "2011/01/14",
         auditDate: "2011/01/16",
         auditResult: "通过",
-        state: "通过",
+        status: "通过",
         carbonCredits: "200",
         expendCarbon: "18",
         reallyGetCarbon: "182",
@@ -28,7 +28,7 @@ const tableData = [
         submitDate: "2012/01/14",
         auditDate: "2012/03/04",
         auditResult: "待审核",
-        state: "待审核",
+        status: "待审核",
         carbonCredits: "200",
         expendCarbon: "18",
         reallyGetCarbon: "182",
@@ -39,23 +39,23 @@ const tableData = [
         submitDate: "2012/01/14",
         auditDate: "2012/03/04",
         auditResult: "已取消",
-        state: "已取消",
+        status: "已取消",
         carbonCredits: "200",
         expendCarbon: "18",
         reallyGetCarbon: "182",
     },
 ]
-const tableRowClassNameByState = ({
+const tableRowClassNameBystatus = ({
     row,
     rowIndex
 }) => {
-    if (row.state === "通过") {
+    if (row.status === "通过") {
         return 'green'
-    } else if (row.state === '不通过') {
+    } else if (row.status === '不通过') {
         return 'red'
-    } else if (row.state === '待审核') {
+    } else if (row.status === '待审核') {
         return 'yellow'
-    } else if (row.state === '已取消') {
+    } else if (row.status === '已取消') {
         return 'gray'
     }
 }
@@ -76,14 +76,14 @@ function showDetail(){
         <!-- 下面展示表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
             <el-table :data="tableData" stripe style="width: 100%;" lazy empty-text="没有记录"
-                :row-class-name="tableRowClassNameByState" max-height="100%">
+                :row-class-name="tableRowClassNameBystatus" max-height="100%">
 
                 <el-table-column prop="id" label="企业id" width="180" style="text-wrap: nowrap;" show-overflow-tooltip />
                 <el-table-column prop="name" label="企业名称" width="250" show-overflow-tooltip />
                 <el-table-column prop="submitDate" label="提交日期" width="110" />
                 <el-table-column prop="auditDate" label="审核日期"  width="110"/>
                 <el-table-column prop="auditResult" label="审核结果" />
-                <el-table-column prop="state" label="状态" />
+                <el-table-column prop="status" label="状态" />
                 <el-table-column prop="carbonCredits" label="碳额度" />
                 <el-table-column prop="expendCarbon" label="消耗碳币" />
                 <el-table-column prop="reallyGetCarbon" label="实得碳币" />
