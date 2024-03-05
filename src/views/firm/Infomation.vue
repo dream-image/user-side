@@ -21,7 +21,11 @@ const routerGo = (target) => {
         <div style="position: absolute;top: 160px;height: 300px;width: 98%;left: 0;right: 0;margin: auto;padding: 8px 5px;"
             class=" border-solid border-slate-300 border" ref="infoDom">
             <span style="position: absolute;font-size: 18px;">企业信息</span>
-
+            <el-button type="" size="normal" style="float: right;" circle >
+                <el-icon>
+                    <Edit />
+                </el-icon>
+            </el-button>
             <div
                 style="display: flex;position: absolute;top: 2cqb;left: 0;right: 0;margin: auto; height: 70%;width: 90%;flex-direction: column;justify-content: space-evenly;min-height: 300px;">
                 <div style="display: flex;justify-content: space-evenly;">
