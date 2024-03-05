@@ -30,6 +30,7 @@
             <div>
               <el-input v-model="password" placeholder="密码" clearable style="width: 200px; transform: translateY(5px)"
                 round @keydown.enter.native="login" ref="passwordInput">
+
                 <template #prefix>
                   <el-icon class="el-input__icon" color="#108b96">
                     <Lock />
@@ -52,6 +53,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 
 const showError = ref(false);
@@ -68,7 +70,7 @@ const props = defineProps({
     type: Object,
     default: {
       isDeveloper: false,
-      identity:"firm"
+      identity: "firm"
     },
   }
 })
@@ -87,6 +89,7 @@ const password = ref("");
 const usernameInput = ref(null)
 const passwordInput = ref(null)
 const { userInfo } = storeToRefs(useUserInfoStore())
+const {updateUserInfo} = useUserInfoStore()
 onMounted(() => {
   let localStoreInfo = localStorage.getItem("userInfo")
   if (localStoreInfo) {
@@ -97,9 +100,22 @@ onMounted(() => {
 async function login() {
 
   if (props.developerMode.isDeveloper) {
-    userInfo.value.isLogin = true
-    userInfo.value.token = "token"
-    userInfo.value.identity=props.developerMode.identity   //通过这个字段来判断是哪个身份 要么是 firm 企业  要么是 auditor 审核员
+    updateUserInfo({
+      isLogin: true,
+      token: 'token',
+      identity: props.developerMode.identity,
+      detail: props.developerMode.identity === 'firm' ? {
+        id: "",
+        name: "",
+        profession: "",
+        legalRepresentative: "",
+        contactInfo: "",
+        corporateNature: "",
+        reportingResponsiblePerson: "",
+        code: "",
+      } :{}
+    })
+
     localStorage.setItem("userInfo", JSON.stringify(userInfo.value))
     // console.log(userInfo.value)
     return
@@ -113,7 +129,7 @@ async function login() {
     if (res.data.code == 200) {
       userInfo.value.isLogin = true
       userInfo.value.token = res.data.token
-      userInfo.value.identity=res.data.identity
+      userInfo.value.identity = res.data.identity
       localStorage.setItem("userInfo", JSON.stringify(userInfo.value))
       return
 
@@ -140,6 +156,7 @@ onMounted(() => {
   })
 })
 </script>
+
 <style scoped>
 #login_box {
   height: 470px;
@@ -224,4 +241,3 @@ onMounted(() => {
   margin: 0;
 }
 </style>
-  

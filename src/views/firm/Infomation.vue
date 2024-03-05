@@ -13,9 +13,10 @@ const routerGo = (target) => {
 
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
-const userInfo=storeToRefs(useUserInfoStore())
-const form = toRef(userInfo.value, 'detail')
+const { userInfo } = storeToRefs(useUserInfoStore())
+const info = computed(() => userInfo.value.detail)
 
+const form = ref(toRaw(userInfo.value.detail))
 // id: "",
 //     name: "",
 //     profession: "",
@@ -31,7 +32,14 @@ function showForm() {
 
 // 修改企业信息
 function onSubmit() {
+    console.log(form.value)
+    // 发送请求
+    // 修改成功
+    //同步更新给userInfo
+    userInfo.value.detail = form.value
 
+    // 关闭表单
+    isShowForm.value = false
 }
 </script>
 
@@ -54,17 +62,16 @@ function onSubmit() {
             <div
                 style="display: flex;position: absolute;top: 2cqb;left: 0;right: 0;margin: auto; height: 70%;width: 90%;flex-direction: column;justify-content: space-evenly;min-height: 300px;">
                 <div style="display: flex;justify-content: space-evenly;">
-                    <InfoBox title="企业名称" :content="form.name"></InfoBox>
-                    <InfoBox title="所属行业" :content="form.profession"></InfoBox>
-                    <InfoBox title="法定代表人" :content="form.legalRepresentative"></InfoBox>
-                    <InfoBox title="联系人信息" :content="form.contactInfo"></InfoBox>
+                    <InfoBox title="企业名称" :content="info.name"></InfoBox>
+                    <InfoBox title="所属行业" :content="info.profession"></InfoBox>
+                    <InfoBox title="法定代表人" :content="info.legalRepresentative"></InfoBox>
+                    <InfoBox title="联系人信息" :content="info.contactInfo"></InfoBox>
                 </div>
                 <div style="display: flex;justify-content: space-evenly;">
-                    <InfoBox title="单位性质" :content="form.corporateNature"></InfoBox>
-                    <InfoBox title="组织机构代码" :content="form.code"></InfoBox>
+                    <InfoBox title="单位性质" :content="info.corporateNature"></InfoBox>
+                    <InfoBox title="组织机构代码" :content="info.code"></InfoBox>
                     <InfoBox title="填报负责人" :content="form.reportingResponsiblePerson"></InfoBox>
-                    <InfoBox title="企业ID" :content="form.id"
-                        :contentStyle='{ fontSize: "15px" }'></InfoBox>
+                    <InfoBox title="企业ID" :content="info.id" :contentStyle='{ fontSize: "15px" }'></InfoBox>
                 </div>
             </div>
         </div>
@@ -97,16 +104,16 @@ function onSubmit() {
                         </el-form-item>
                         <el-form-item label="所属行业">
                             <el-select v-model="form.profession" placeholder="所属行业">
-                                <el-option label="发电" value="0" />
-                                <el-option label="电网" value="1" />
-                                <el-option label="钢铁生产" value="2" />
-                                <el-option label="化工生产" value="3" />
-                                <el-option label="电解铝" value="4" />
-                                <el-option label="镁冶炼" value="5" />
-                                <el-option label="平板玻璃生产" value="6" />
-                                <el-option label="水泥生产" value="7" />
-                                <el-option label="陶瓷生产" value="8" />
-                                <el-option label="民航" value="9" />
+                                <el-option label="发电" value="发电" />
+                                <el-option label="电网" value="电网" />
+                                <el-option label="钢铁生产" value="钢铁生产" />
+                                <el-option label="化工生产" value="化工生产" />
+                                <el-option label="电解铝" value="电解铝" />
+                                <el-option label="镁冶炼" value="镁冶炼" />
+                                <el-option label="平板玻璃生产" value="平板玻璃生产" />
+                                <el-option label="水泥生产" value="水泥生产" />
+                                <el-option label="陶瓷生产" value="陶瓷生产" />
+                                <el-option label="民航" value="民航" />
                             </el-select>
                         </el-form-item>
                         <el-form-item label="法定代表人">
@@ -116,18 +123,18 @@ function onSubmit() {
                             <el-input v-model="form.contactInfo" />
                         </el-form-item>
                         <el-form-item label="单位性质">
-                            <el-input v-model="form.corporateNature" disabled/>
+                            <el-input v-model="form.corporateNature" disabled />
                             <!-- 管理员新建账户后不可修改，除非管理员修改 -->
                         </el-form-item>
                         <el-form-item label="填报负责人">
                             <el-input v-model="form.reportingResponsiblePerson" />
                         </el-form-item>
                         <el-form-item label="组织机构代码">
-                            <el-input v-model="form.code" disabled/>
+                            <el-input v-model="form.code" disabled />
                             <!-- 管理员新建账户后不可修改，除非管理员修改 -->
                         </el-form-item>
                         <el-form-item label="企业ID">
-                            <el-input v-model="form.id" disabled/>
+                            <el-input v-model="form.id" disabled />
                             <!-- 管理员新建账户后不可修改，除非管理员修改 -->
                         </el-form-item>
                         <el-form-item>

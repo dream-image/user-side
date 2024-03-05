@@ -8,6 +8,8 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     identity:'',
     detail:{}
   })
-  
-  return { userInfo }
+  function updateUserInfo(data){
+    userInfo.value=data
+  }
+  return { userInfo,updateUserInfo }
 })

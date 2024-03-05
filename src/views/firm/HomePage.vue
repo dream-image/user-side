@@ -6,6 +6,30 @@ import { ref } from 'vue'
 import { useTransition } from '@vueuse/core'
 import { ChatLineRound, Male } from '@element-plus/icons-vue'
 
+//加入了防抖的保留两位小数
+function precisionRef(value, delay = 500, digit = 2) {
+    let timeout
+    return customRef((track, trigger) => {
+        return {
+            get() {
+                track()
+                return value
+            },
+            set(newValue) {
+                console.log(newValue)
+                clearTimeout(timeout)
+                timeout = setTimeout(() => {
+                    console.log(newValue, value)
+                    if (value + '.' !== newValue + "") {
+                        value = (newValue * 1).toFixed(digit) * 1
+                    }
+                    trigger()
+                }, delay)
+
+            }
+        }
+    })
+}
 const bottomPriceDom = ref(null)
 
 const source = ref(0)
@@ -29,7 +53,7 @@ function showLedger() {
 
 }
 
-const priceChosen = ref(0)//选中的价格
+const priceChosen = ref()//选中的价格
 const loading = ref(false) //加载状态
 const options = ref([
     {
@@ -51,7 +75,7 @@ function searchPrice() {
 }
 
 
-const buyNumber = ref(0) //购买数量
+const buyNumber = precisionRef(null, 0)//购买数量
 
 // 购买碳币
 function buyCarbonCoin() {
@@ -59,15 +83,17 @@ function buyCarbonCoin() {
 }
 
 
-const sellNumber = ref(0)//出售数量
-const sellPrice = ref(0)//出售价格
+const sellNumber = precisionRef(null, 0)//出售数量
+
+const sellPrice = precisionRef(null, 0)
+//出售价格
 function sellCarbonCoin() {
     console.log('出售碳币')
 }
 
 
 // 要展示的价格曲线图是24小时，还是1周还是一个月还是一年
-const priceTableDate=ref('24小时')
+const priceTableDate = ref('24小时')
 
 </script>
 
@@ -212,7 +238,7 @@ const priceTableDate=ref('24小时')
                                 <span style="position: absolute;top: 2px;left: 5px;font-size: 13px;">价格</span>
                                 <div style="transform: translateY(5px);width: 80%;">
                                     <el-input size="small" style="width: 100%;" minlength="1" placeholder="请输入出售价格"
-                                        class="removeBorder" type="number" v-model="sellPrice" clearable></el-input>
+                                        class="removeBorder" v-model="sellPrice" type="number" clearable></el-input>
                                 </div>
                             </div>
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"

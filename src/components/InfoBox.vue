@@ -5,7 +5,7 @@ const props = defineProps({
         required:true
     },
     content:{
-        type:String,
+        type:[String],
         required:true
     },
     contentStyle:{
