@@ -5,6 +5,7 @@ import {
 } from '@element-plus/icons-vue'
 import debounce from '@/utils/debounce.js'
 import { useRouter, useRoute } from 'vue-router'
+let ob
 export default {
     components: { IconMenu },
     setup() {
@@ -26,7 +27,7 @@ export default {
         }
     },
     mounted() {
-        const ob = new ResizeObserver(debounce(() => {
+        ob = new ResizeObserver(debounce(() => {
             if (document.body.getBoundingClientRect().width < 902) {
                 this.isCollapse = true
             } else {

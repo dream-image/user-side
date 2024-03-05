@@ -2,8 +2,21 @@
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import Badge from "./Badge.vue";
+import { useRouter, useRoute } from 'vue-router'
 const { userInfo } = storeToRefs(useUserInfoStore())
-const isShowLogout = ref(false)
+const { updateUserInfo } = useUserInfoStore()
+const router = useRouter()
+function logout() {
+    updateUserInfo({
+        token: "",
+        isLogin: false,
+        identity: '',
+        detail: {}
+    })
+    localStorage.removeItem("userInfo")
+    router.replace({path:'/'})
+
+}
 </script>
 
 <template>
@@ -26,7 +39,8 @@ const isShowLogout = ref(false)
                     <img src="@/assets/审核员.svg" style="height:100%;border-radius:50%;border:1px solid black;" alt="审核员"
                         v-if="userInfo.identity === 'auditor'">
                     <div style="position: absolute;width: 200%;height: 100%;transform: translateX(-25%);" id="logout">
-                        <el-button type="primary" size="small" style="width:100%;height: 80%;">退出登陆</el-button>
+                        <el-button type="primary" size="small" style="width:100%;height: 80%;"
+                            @click="logout">退出登陆</el-button>
                     </div>
                 </div>
             </div>
@@ -60,5 +74,4 @@ const isShowLogout = ref(false)
         opacity: 1;
     }
 }
-
 </style>

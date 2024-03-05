@@ -6,14 +6,16 @@ import Login from './components/Login.vue'
 import LeftMenuForFirm from './components/LeftMenuForFirm.vue'
 import TopBar from './components/TopBar.vue'
 import LeftMenuForAuditor from "./components/LeftMenuForAuditor.vue";
+
 const { userInfo } = storeToRefs(useUserInfoStore())
+
 const baseURL = inject("baseURL")
 </script>
 
 <template>
   <!-- 登陆页 -->
   <Login :url="baseURL + '/login'" v-if="!userInfo.isLogin"
-    :developerMode="{ 'isDeveloper': true, 'identity': 'firm' }">
+    :developerMode="{ 'isDeveloper': true, 'identity': 'auditor' }">
   </Login>
   <!-- {'isDeveloper':true,'identity':'firm'} 传入这个后直接点击登录即可，identity如果是firm就进入企业页面 如果是 auditor就进入审核员页面 -->
   <transition mode="out-in" name="fade">

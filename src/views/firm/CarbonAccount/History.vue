@@ -78,7 +78,7 @@ function showDetail(){
             <el-table :data="tableData" stripe style="width: 100%;" lazy empty-text="没有记录"
                 :row-class-name="tableRowClassNameBystatus" max-height="100%">
 
-                <el-table-column prop="id" label="企业id" width="180" style="text-wrap: nowrap;" show-overflow-tooltip />
+                <el-table-column prop="id" label="企业id" width="180" show-overflow-tooltip />
                 <el-table-column prop="name" label="企业名称" width="250" show-overflow-tooltip />
                 <el-table-column prop="submitDate" label="提交日期" width="110" />
                 <el-table-column prop="auditDate" label="审核日期"  width="110"/>

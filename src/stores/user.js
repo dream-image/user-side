@@ -6,7 +6,7 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     token:"",
     isLogin:false,
     identity:'',
-    detail:{}
+    detail:{},
   })
   function updateUserInfo(data){
     userInfo.value=data

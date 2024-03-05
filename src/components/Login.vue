@@ -93,10 +93,13 @@ const {updateUserInfo} = useUserInfoStore()
 onMounted(() => {
   let localStoreInfo = localStorage.getItem("userInfo")
   if (localStoreInfo) {
-    userInfo.value = { ...JSON.parse(localStoreInfo) }
+    updateUserInfo({
+      ...JSON.parse(localStoreInfo)
+    })
     return
   }
 })
+
 async function login() {
 
   if (props.developerMode.isDeveloper) {
