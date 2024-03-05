@@ -60,6 +60,8 @@ const routerGo = (target) => {
             <el-button type="primary" style="top: 0;bottom: 0;margin-top: auto;margin-bottom: auto;" size="large"
                 @click="routerGo('/bourse')">交易所</el-button>
         </div>
+
+        <teleport to='body' />
     </div>
 </template>
 
