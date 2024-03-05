@@ -5,7 +5,8 @@ export const useUserInfoStore = defineStore('userInfo', () => {
   const userInfo=ref({
     token:"",
     isLogin:false,
-    identity:''
+    identity:'',
+    detail:{}
   })
   
   return { userInfo }
