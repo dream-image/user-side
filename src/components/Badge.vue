@@ -1,0 +1,9 @@
+<script setup>
+
+</script>
+<template>
+    <svg t="1709636053720" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10431" data-spm-anchor-id="a313x.search_index.0.i9.61dc3a81RRSwbK" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48"><path d="M512 512m-256 0a256 256 0 1 0 512 0 256 256 0 1 0-512 0Z" p-id="10432" data-spm-anchor-id="a313x.search_index.0.i5.61dc3a81RRSwbK" class="" fill="#f46c6c"></path></svg>
+</template>
+<style lang=''>
+
+</style>
