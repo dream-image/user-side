@@ -5,7 +5,7 @@ import RMB from '@/assets/人民币.svg';
 import { ref } from 'vue'
 import { useTransition } from '@vueuse/core'
 import { ChatLineRound, Male } from '@element-plus/icons-vue'
-
+import Ledger from '@/components/Ledger.vue'
 //加入了防抖的保留两位小数
 function precisionRef(value, delay = 500, digit = 2) {
     let timeout
@@ -48,9 +48,10 @@ function topUp() {
 
 }
 
+const isShowLedger=ref(false)
 // 展示账本
 function showLedger() {
-
+    isShowLedger.value=!isShowLedger.value
 }
 
 const priceChosen = ref()//选中的价格
@@ -146,6 +147,7 @@ const priceTableDate = ref('24小时')
                                 </template>
                                 账本
                             </el-button>
+                            <Ledger v-model:isShowLedger="isShowLedger" v-if="isShowLedger"></Ledger>
                         </div>
                     </div>
                     <div
