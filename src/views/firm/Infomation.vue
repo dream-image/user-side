@@ -15,8 +15,9 @@ import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 const { userInfo } = storeToRefs(useUserInfoStore())
 const info = computed(() => userInfo.value.detail)
-
-const form = ref(toRaw(userInfo.value.detail))
+const form = ref({
+    ...toRaw(userInfo.value.detail)
+})
 // id: "",
 //     name: "",
 //     profession: "",
@@ -36,7 +37,7 @@ function onSubmit() {
     // 发送请求
     // 修改成功
     //同步更新给userInfo
-    userInfo.value.detail = form.value
+    // userInfo.value.detail = form.value
 
     // 关闭表单
     isShowForm.value = false
@@ -70,7 +71,7 @@ function onSubmit() {
                 <div style="display: flex;justify-content: space-evenly;">
                     <InfoBox title="单位性质" :content="info.corporateNature"></InfoBox>
                     <InfoBox title="组织机构代码" :content="info.code"></InfoBox>
-                    <InfoBox title="填报负责人" :content="form.reportingResponsiblePerson"></InfoBox>
+                    <InfoBox title="填报负责人" :content="info.reportingResponsiblePerson"></InfoBox>
                     <InfoBox title="企业ID" :content="info.id" :contentStyle='{ fontSize: "15px" }'></InfoBox>
                 </div>
             </div>
