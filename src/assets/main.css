@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.green {
+    color: var(--el-color-success);
+}
+
+.red {
+    color: var(--el-color-error);
+}
+
+.yellow {
+    color: var(--el-color-warning);
+}
+
+.gray {
+    color: var(--el-color-info);
+}

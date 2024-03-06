@@ -98,19 +98,5 @@ function showDetail(){
 </template>
 
 <style lang='css'>
-.green {
-    color: var(--el-color-success);
-}
 
-.red {
-    color: var(--el-color-error);
-}
-
-.yellow {
-    color: var(--el-color-warning);
-}
-
-.gray {
-    color: var(--el-color-info);
-}
 </style>
