@@ -188,8 +188,7 @@ const priceTableDate = ref('24小时')
             </div>
             <!-- 交易框 -->
             <div style="grid-area: right;" class=" border-solid border-slate-300 border">
-                <el-tabs type="border-card" class="demo-tabs" style="width: 100%;height: 100%; display: flex;
-        flex-direction: column;" :stretch="true">
+                <el-tabs type="border-card" class="demo-tabs" style="width: 100%;height: 100%; display: flex; flex-direction: column;" :stretch="true">
                     <el-tab-pane label="购买" style="height: 100%;">
                         <!-- 这里是购买框 -->
                         <div
