@@ -48,10 +48,10 @@ function topUp() {
 
 }
 
-const isShowLedger=ref(false)
+const isShowLedger = ref(false)
 // 展示账本
 function showLedger() {
-    isShowLedger.value=!isShowLedger.value
+    isShowLedger.value = !isShowLedger.value
 }
 
 const priceChosen = ref()//选中的价格
@@ -188,10 +188,12 @@ const priceTableDate = ref('24小时')
             </div>
             <!-- 交易框 -->
             <div style="grid-area: right;" class=" border-solid border-slate-300 border">
-                <el-tabs type="border-card" class="demo-tabs" style="width: 100%;height: 100%;" :stretch="true">
-                    <el-tab-pane label="购买">
+                <el-tabs type="border-card" class="demo-tabs" style="width: 100%;height: 100%; display: flex;
+        flex-direction: column;" :stretch="true">
+                    <el-tab-pane label="购买" style="height: 100%;">
                         <!-- 这里是购买框 -->
-                        <div style="width: 100%;height: 100%;display: flex;flex-direction: column;gap: 2px;">
+                        <div
+                            style="width: 100%;height: 100%;display: flex;flex-direction: column;justify-content: space-evenly;height: 100%;">
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <span style="position: absolute;top: 2px;left: 5px;font-size: 13px;">种类</span>
@@ -225,9 +227,10 @@ const priceTableDate = ref('24小时')
                             </div>
                         </div>
                     </el-tab-pane>
-                    <el-tab-pane label="出售">
+                    <el-tab-pane label="出售" style="height: 100%;">
                         <!-- 这里是出售框 -->
-                        <div style="width: 100%;height: 100%;display: flex;flex-direction: column;gap: 2px;">
+                        <div
+                            style="width: 100%;height: 100%;display: flex;flex-direction: column;gap: 2px;justify-content: space-evenly;height: 100%;">
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <span style="position: absolute;top: 2px;left: 5px;font-size: 13px;">种类</span>
@@ -320,12 +323,14 @@ const priceTableDate = ref('24小时')
     text-align: center;
 }
 
-.demo-tabs>.el-tabs__content {
-    padding: 32px;
-    color: #6b778c;
-    font-size: 32px;
-    font-weight: 600;
+.demo-tabs {
+    :deep(.el-tabs__content) {
+        flex-grow: 1;
+    }
+
 }
+
+
 
 .demo-tabs .custom-tabs-label .el-icon {
     vertical-align: middle;
@@ -371,13 +376,5 @@ const priceTableDate = ref('24小时')
     display: inline-flex;
     align-items: center;
     margin-left: 4px;
-}
-
-.green {
-    color: var(--el-color-success);
-}
-
-.red {
-    color: var(--el-color-error);
 }
 </style>
