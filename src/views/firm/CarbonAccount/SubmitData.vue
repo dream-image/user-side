@@ -189,7 +189,7 @@ function saveFile() {
 }
 
 // 点击提交后出现确认框
-function open() {
+function submit() {
     ElMessageBox.confirm(
         '你确定要提交吗？',
         '消息确认',
@@ -229,12 +229,12 @@ function open() {
                 style="width: 240px;position: absolute;left: 100px;" clearable>
                 <el-option v-for="item in itemList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
-            <el-select v-model="chooseWhatProvince" placeholder="选择所在省份"
+            <el-select v-model="chooseWhatProvince" placeholder="选择所在省份"  filterable no-match-text="没有匹配的省份"
                 style="width: 150px;position: absolute;left: 370px;" clearable>
                 <el-option v-for="item in coefficient" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
 
-            <el-button style="position: absolute;right: 0;bottom: 0;" type="primary" @click="open"
+            <el-button style="position: absolute;right: 0;bottom: 0;" type="primary" @click="submit"
                 :disabled="chooseWhatItem == '' || !hasUploadMaterial">提交</el-button>
             <el-button style="position: absolute;right: 70px;bottom: 0;" type="primary"
                 @click="addMaterial">附加证明材料</el-button>
@@ -243,8 +243,10 @@ function open() {
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
             <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince"
-                v-if="true || chooseWhatItem === '电网'"></PowerGrid>
+                v-if="chooseWhatItem === '电网'"></PowerGrid>
         </div>
+
+        <!-- 上传图片/pdf的抽屉 -->
         <el-drawer v-model="isShowDrawer" direction="btt" size="70%">
             <template #header>
                 <h4>添加证明材料</h4>
