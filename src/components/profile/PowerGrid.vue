@@ -1,23 +1,51 @@
 <script setup lang="jsx">
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, watchEffect } from 'vue';
+const props = defineProps({
+    coefficient: {
+        type: [String, Number],
+        required: true,
+        default: 1
+    }
+})
+
 const form = reactive({
     EL上网: "",
     EL输入: "",
     EL输出: "",
     EL售电: "",
     EL电网: "",
+    tCO2: ""
 })
 
+const rule = [{
+    validator: (rule, value, callback) => {
+        if (value < 0) {
+            callback(new Error("请输入大于0的数"))
+        }
+        else if (value == '') {
+            callback(new Error("该项必填"))
+        }
+        callback()
+    }
+    , trigger: "blur"
+}]
+const rules = reactive({
+    EL上网: rule,
+    EL输入: rule,
+    EL输出: rule,
+    EL售电: rule,
+    EL电网: rule,
+    tCO2: rule
+})
 
-
-
+// InputCell cellRenderer columns generateData data 均为表格数据服务，具体作用参考elementUI的虚拟表格文档
 const InputCell = ({
     value,
     onChange,
     forwardRef,
 }) => {
     return (
-        <el-input ref={forwardRef} onInput={onChange} modelValue={value} />
+        <el-input ref={forwardRef} onInput={onChange} modelValue={value} type="number" step="0.01" min={0} clearable />
     )
 }
 const cellRenderer = ({ rowData, column }) => {
@@ -65,7 +93,7 @@ const columns = [
         key: "设备容量1",
         dataKey: "设备容量1",
         title: "设备容量（千克）",
-        width: 150,
+        width: 200,
         cellRenderer
 
     },
@@ -73,7 +101,7 @@ const columns = [
         key: "实际回收量1",
         dataKey: "实际回收量1",
         title: "实际回收量（千克）",
-        width: 150,
+        width: 200,
         cellRenderer
     },
     {
@@ -86,19 +114,17 @@ const columns = [
         key: "设备容量2",
         dataKey: "设备容量2",
         title: "设备容量（千克）",
-        width: 150,
+        width: 200,
         cellRenderer
     },
     {
         key: "实际回收量2",
         dataKey: "实际回收量2",
         title: "实际回收量（千克）",
-        width: 150,
+        width: 200,
         cellRenderer
     },
 ]
-
-
 
 const generateData = (
     columns,
@@ -130,7 +156,7 @@ const generateData = (
 
 
 const tableWrapperDom = ref(null)
-const data = ref(generateData(columns, 3))
+const data = ref(generateData(columns, 6))
 function addData() {
     data.value.push({
         "id": data.value.length,
@@ -146,6 +172,17 @@ function addData() {
         "实际回收量2": ""
     })
 }
+
+
+watchEffect(() => {
+    let E网损 = (form.EL上网 * 1 + form.EL输入 * 1 - form.EL输出 * 1 - form.EL售电 * 1) * props.coefficient
+    let ESF6 = data.value.reduce((total, cur, index) => {
+        return total + (cur.设备容量1 - cur.实际回收量1) * 1 + (cur.设备容量2 - cur.实际回收量2) * 1
+    }, 0)
+    form.tCO2 = ((E网损 + ESF6) * 1).toFixed(2) * 1
+})
+
+
 let ob
 const tableHeight = ref()
 onMounted(() => {
@@ -162,21 +199,27 @@ onUnmounted(() => {
     <div style="width: 100%;height: 100%;padding: 10px;overflow: auto;display: flex;flex-direction: column;gap: 20px; "
         ref="tableWrapperDom">
         <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto"
-            class="demo-form-inline" label-position="left" status-icon>
-            <el-form-item label="电厂上网电量(兆瓦时):" required>
-                <el-input v-model="form.EL上网" style=""></el-input>
+            class="demo-form-inline" label-position="right" status-icon :rules="rules">
+            <el-form-item label="电厂上网电量(兆瓦时):" required prop="EL上网">
+                <el-input v-model="form.EL上网" style="" type="number" step="0.01" :min="0" clearable></el-input>
             </el-form-item>
-            <el-form-item label="自外省输入电量(兆瓦时):" required>
-                <el-input v-model="form.EL输入" style="" required></el-input>
+            <el-form-item label="自外省输入电量(兆瓦时):" required prop="EL输入">
+                <el-input v-model="form.EL输入" style="" required type="number" step="0.01" :min="0" clearable></el-input>
             </el-form-item>
-            <el-form-item label="向外省输出电量(兆瓦时):" required>
-                <el-input v-model="form.EL输出" style=""></el-input>
+            <el-form-item label="向外省输出电量(兆瓦时):" required prop="EL输出">
+                <el-input v-model="form.EL输出" style="" type="number" step="0.01" :min="0" clearable></el-input>
             </el-form-item>
-            <el-form-item label="用户用电量(兆瓦时):" required>
-                <el-input v-model="form.EL售电" style=""></el-input>
+            <el-form-item label="用户用电量(兆瓦时):" required prop="EL售电">
+                <el-input v-model="form.EL售电" style="" type="number" step="0.01" :min="0" clearable></el-input>
             </el-form-item>
             <el-form-item label="区域电网年平均供电排放因子(吨二氧化碳/兆瓦时):" required>
-                <el-input v-model="form.EL电网" style=""></el-input>
+                <el-input :value="props.coefficient" style="" disabled type="number" step="0.01"></el-input>
+            </el-form-item>
+            <el-form-item label="碳排放总和" prop="tCO2">
+                <el-input v-model="form.tCO2" style="" disabled type="number" step="0.01"></el-input>
+                <el-link href="/2、《中国电网企业温室气体排放核算方法与报告指南（试行）》.pdf" type="info"
+                    style="font-size: 8px;position: absolute;transform: translateY(100%);"
+                    download="《中国电网企业温室气体排放核算方法与报告指南（试行）》.pdf">碳排放总和计算参考资料</el-link>
             </el-form-item>
         </el-form>
         <div style="width: 100%;height: max-content;overflow: visible;position:relative;"
@@ -190,8 +233,17 @@ onUnmounted(() => {
             <div :style="{ height: `${tableHeight}px` }">
                 <el-auto-resizer>
                     <template #default="{ height, width }">
-                        <el-table-v2 :columns="columns" :data="data" :width="width" :height="height" fixed />
+                        <el-table-v2 :columns="columns" :data="data" :width="width" :height="height" fixed
+                            :row-height="40" :footer-height="30">
+                            <template #footer>
+                                <div class="gray" style="display:flex;align-items: center;
+                                    justify-content: center; height: 100%;width: 100%;">
+                                    六氟化硫回收*
+                                </div>
+                            </template>
+                        </el-table-v2>
                     </template>
+
                 </el-auto-resizer>
             </div>
         </div>
