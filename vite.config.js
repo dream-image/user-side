@@ -17,7 +17,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'vue-pdf': 'vue-pdf/dist/vue-pdf.esm.browser.js'
     }
-  }
+  },
+  define: {
+    'process.env': process.env
+  },
+  extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
 })

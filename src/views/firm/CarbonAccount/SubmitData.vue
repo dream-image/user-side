@@ -5,7 +5,10 @@ import auditingPicture from '@/assets/审核中.svg'
 import hasPassPicture from '@/assets/没有找到相关结果.svg'
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
+import { Delete, Download, Plus, ZoomIn, Close } from '@element-plus/icons-vue'
 const { userInfo } = storeToRefs(useUserInfoStore())
+
+
 
 const itemList = [
     {
@@ -170,7 +173,7 @@ const uploadRef = ref(null)
 // 是否已经上传材料
 const hasUploadMaterial = ref(false)
 
-// 点击图片预览效果
+// 点击图片预览效果  通过插槽已经实现
 function handlePreview(e) {
     console.log(e)
 }
@@ -190,8 +193,6 @@ function cancel() {
 function saveFile() {
     isShowDrawer.value = !isShowDrawer.value
     hasUploadMaterial.value = true
-
-
 }
 
 // 点击提交后出现确认框
@@ -223,13 +224,46 @@ function submit() {
         })
 }
 
+
+// 将blob读取为base64 不过已弃用
+// async function getImageUrl(file) {
+//     if (file && file.url) {
+//         if (file.url.startsWith('blob:')) {
+//             return await new Promise((resolve, reject) => {
+//                 const xhr = new XMLHttpRequest();
+//                 xhr.onload = function () {
+//                     const reader = new FileReader();
+//                     reader.onloadend = function () {
+//                         resolve(reader.result);
+//                     }
+//                     reader.onerror = function () {
+//                         reject(reader.error);
+//                     }
+//                     console.log(xhr.response)
+//                     reader.readAsDataURL(xhr.response);
+//                 }
+//                 xhr.onerror = function () {
+//                     reject(new Error('Failed to fetch blob content'));
+//                 }
+//                 xhr.open('GET', file.url);
+//                 xhr.responseType = 'blob';
+//                 xhr.send();
+//             });
+//         } else {
+//             return file.url;
+//         }
+//     } else {
+//         return "";
+//     }
+// }
+function deleteFile(file) {
+    fileList.value = fileList.value.filter(item => item.uid !== file.uid);
+}
 </script>
 <template>
-    <el-empty v-if="userInfo.auditing"
-        :image="auditingPicture" description="您已经有报告在审核中，请等待审核结果" />
-    <el-empty v-else-if="userInfo.hasPass"
-        :image="hasPassPicture" description="您今年的报告已通过，不用再重复提交" />
-    
+    <el-empty v-if="userInfo.auditing" :image="auditingPicture" description="您已经有报告在审核中，请等待审核结果" />
+    <el-empty v-else-if="userInfo.hasPass" :image="hasPassPicture" description="您今年的报告已通过，不用再重复提交" />
+
     <div style="height: 100%;width: 100%;position: relative;" v-else>
         <div style="position: absolute;display: flex;flex-direction: column;gap: 8px;width: 98%;">
             <span style="font-size: 20px;">提交资料</span>
@@ -254,7 +288,8 @@ function submit() {
 
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
-            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disable="false" v-if="chooseWhatItem === '电网'">
+            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disable="false"
+                v-if="chooseWhatItem === '电网'">
             </PowerGrid>
         </div>
 
@@ -268,6 +303,21 @@ function submit() {
                     <el-upload v-model:file-list="fileList" class="upload-demo" drag :auto-upload="false"
                         ref="uploadRef" :before-upload="(e) => beforeAvatarUpload(e)" :on-preview="handlePreview"
                         :on-remove="handleRemove" list-type="picture">
+                        <template #file="{ file }">
+                            {{ console.log(file) }}
+                            <template v-if="file.raw.type.indexOf('image') != -1">
+                                <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7"
+                                    :src="file.url" :min-scale="0.2" :initial-index="4" fit="cover"
+                                    :preview-src-list="fileList.map(i => i.url)" />
+                                <span style="margin-left: 25px;">{{ file.name }}</span>
+                                <el-icon
+                                    style="position: absolute;right: 2px;top: 2px;width: 20px;height: 20px;opacity: 0.8;cursor: pointer;"
+                                    id="deleteIcon" @click="deleteFile(file)">
+                                    <Close />
+                                </el-icon>
+                            </template>
+
+                        </template>
                         <el-button type="primary">点击或拖入上传</el-button>
                         <template #tip>
                             <div class="el-upload__tip">
@@ -287,10 +337,6 @@ function submit() {
     </div>
 
 
-    <!-- <div class="demo-image__preview">
-        <el-image style="width: 100px; height: 100px" :src="url" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2"
-            :preview-src-list="srcList" :initial-index="4" fit="cover" />
-    </div> -->
 </template>
 <style scoped>
 .demo-image__error .image-slot {
@@ -319,8 +365,18 @@ function submit() {
 .el-link .el-icon--right.el-icon {
     vertical-align: text-bottom;
 }
+
+#deleteIcon {
+    visibility: hidden;
+}
 </style>
 <style>
+.el-upload-list__item:hover {
+    #deleteIcon {
+        visibility: visible;
+    }
+}
+
 .avatar-uploader .el-upload {
     border: 1px dashed var(--el-border-color);
     border-radius: 6px;
@@ -340,5 +396,9 @@ function submit() {
     width: 178px;
     height: 178px;
     text-align: center;
+}
+
+.el-upload-list--picture .el-upload-list__item {
+    z-index: unset;
 }
 </style>

@@ -3,6 +3,8 @@ import PowerGrid from '@/components/profile/PowerGrid.vue';
 import { TableV2FixedDir } from 'element-plus';
 import { MoreFilled } from '@element-plus/icons-vue'
 import { shallowRef } from 'vue';
+// import preViewPDF from '@/components/preViewPDF.vue';
+import PDF from "@/assets/PDF.svg"
 const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
 
@@ -10,8 +12,61 @@ const isShowDetail = ref(false)
 const componentsObj = {
     'PowerGrid': PowerGrid
 }
+const COLOR = {
+    GREEN: "#0bbd87",
+    RED: "rgb(245,108,108)",
+    YELLOW: "rgb(230,162,60)",
+    GRAY: "rgb(144,147,153)"
+}
+
+async function getFile(url, name, type) {
+
+    try {
+        let a = name.split('.')
+        let contentType = type == 'image' ? ('image/' + a[a.length - 1]) : 'application/pdf'
+        console.log(contentType)
+        let res = await fetch('http://localhost:3000/file/' + url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': contentType,
+                'Access-Control-Expose-Headers': '*'
+            },
+        })
+
+        // console.log(res.headers)
+        let blob = await res.blob()
+        // if (type == 'image') {
+        let reader = new FileReader()
+        reader.onload = () => {
+            tableData[0].detail.fileList.push({
+                url: reader.result,
+                name: name,
+                type: type,
+            })
+        }
+        reader.readAsDataURL(blob)
+        // }
+        // else if (type == 'pdf') {
+        //     let file = new File([blob], name, { type: contentType })
+        //     console.log(file)
+        //     tableData[0].detail.fileList.push({
+        //         file: file,
+        //         url: PDF
+        //     })
+        // }
 
 
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+onMounted(async () => {
+    await getFile(1, "1.png", 'image')
+    await getFile(2, "2.png", 'image')
+    await getFile(3, "3.png", 'image')
+    await getFile('pdf', "test.pdf", 'pdf')
+})
 // 这个里面的数据应该从后端获取，现在只是写死并附上格式
 const tableData = reactive([
     {
@@ -59,6 +114,33 @@ const tableData = reactive([
                     实际回收量2: "43",
                 }
             ],
+            activities: {
+                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
+                // 提交申请后是0  审核人处理后是1  审核机构介入后是2
+                data: [
+                    {
+                        timestamp: '2018-04-12 20:46',
+                        color: COLOR.GREEN,
+                        title: "提交申请",
+                        subTitle: "已通过"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.RED,
+                        title: "未通过",
+                        subTitle: "理由：材料不充分"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.GRAY,  //未轮到的都用灰色
+                        title: "未介入",//不知道这里叫什么好,
+                        subTitle: "监管机构未介入"
+                    },
+                ]
+            },
+            fileList: [
+
+            ]
         }
     },
     {
@@ -106,6 +188,29 @@ const tableData = reactive([
                     实际回收量2: "43",
                 }
             ],
+            activities: {
+                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
+                data: [
+                    {
+                        timestamp: '2018-04-12 20:46',
+                        color: COLOR.GREEN,
+                        title: "提交申请",
+                        subTitle: "已通过"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.RED,
+                        title: "未通过",
+                        subTitle: "理由：材料不充分"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.GRAY,
+                        title: "未介入",//不知道这里叫什么好,
+                        subTitle: "监管机构未介入"
+                    },
+                ]
+            }
         }
     },
     {
@@ -153,6 +258,29 @@ const tableData = reactive([
                     实际回收量2: "43",
                 }
             ],
+            activities: {
+                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
+                data: [
+                    {
+                        timestamp: '2018-04-12 20:46',
+                        color: COLOR.GREEN,
+                        title: "提交申请",
+                        subTitle: "已通过"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.RED,
+                        title: "未通过",
+                        subTitle: "理由：材料不充分"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.GRAY,
+                        title: "未介入",//不知道这里叫什么好,
+                        subTitle: "监管机构未介入"
+                    },
+                ]
+            }
         }
     },
     {
@@ -200,6 +328,29 @@ const tableData = reactive([
                     实际回收量2: "43",
                 }
             ],
+            activities: {
+                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
+                data: [
+                    {
+                        timestamp: '2018-04-12 20:46',
+                        color: COLOR.GREEN,
+                        title: "提交申请",
+                        subTitle: "已通过"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.RED,
+                        title: "未通过",
+                        subTitle: "理由：材料不充分"
+                    },
+                    {
+                        timestamp: '2018-04-03 20:46',
+                        color: COLOR.GRAY,
+                        title: "未介入",//不知道这里叫什么好,
+                        subTitle: "监管机构未介入"
+                    },
+                ]
+            }
         }
     },
 ])
@@ -226,33 +377,27 @@ function showDetail(scope) {
     isShowDetail.value = !isShowDetail.value
     showDataIndex.value = scope.$index
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
-    console.log(showWhatComponentOfDetail.value)
+    // console.log(showWhatComponentOfDetail.value)
 }
 
 function showForm() {
     isShowDetail.value = !isShowDetail.value
 }
 
-const activities = [
-    {
-        content: 'Custom icon',
-        timestamp: '2018-04-12 20:46',
-        size: 'large',
-        type: 'primary',
-        icon: MoreFilled,
-    },
-    {
-        content: 'Custom color',
-        timestamp: '2018-04-03 20:46',
-        color: '#0bbd87',
-    },
-    {
-        content: 'Custom hollow',
-        timestamp: '2018-04-03 20:46',
-        type: 'primary',
-        hollow: true,
-    },
-]
+
+// 下面的都和详细中的文件组件有关
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const disabled = ref(false)
+
+const handlePictureCardPreview = (file) => {
+    dialogImageUrl.value = file.url
+    dialogVisible.value = true
+}
+
+const handleDownload = (file) => {
+    console.log(file)
+}
 </script>
 
 <template>
@@ -286,26 +431,79 @@ const activities = [
         <teleport to='body'>
             <div style="position: absolute;width: 100%;height: 100%;z-index: 9;" v-if="isShowDetail">
                 <div style="position: absolute;left: 0;right: 0;top: 0;bottom:0;margin: auto;width: max-content;height:600px;overflow: auto;
-                background-color: white;padding: 10px 10px;border-radius: 8px;z-index: 9999;">
+                background-color: white;padding: 10px 10px;border-radius: 8px;z-index: 99;">
                     <component :is="showWhatComponentOfDetail" :disabled="true" style="height: 600px;width: 1000px;"
                         :coefficient="tableData[showDataIndex].detail.chooseWhatProvince"
                         :data="tableData[showDataIndex].detail.data" :form="tableData[showDataIndex].detail.form">
                     </component>
-                    <el-timeline style="max-width: 600px">
-                        <el-timeline-item v-for="(activity, index) in activities" :key="index" :icon="activity.icon"
-                            :type="activity.type" :color="activity.color" :size="activity.size"
-                            :hollow="activity.hollow" :timestamp="activity.timestamp">
-                            {{ activity.content }}
-                        </el-timeline-item>
-                    </el-timeline>
+                    <div style="display: flex;width: 100%;justify-content: space-between;padding: 10px;">
+                        <el-timeline style="min-width: 500px;transform: translateX(80px);">
+                            <el-timeline-item
+                                v-for="(activity, index) in tableData[showDataIndex].detail.activities.data"
+                                :key="index" :icon="activity.icon" :type="activity.type" :color="activity.color"
+                                :size="activity.size" :hollow="activity.hollow" :timestamp="activity.timestamp"
+                                placement="top">
+                                <el-card
+                                    :body-style="{ display: 'flex', flexDirection: 'column', opacity: tableData[showDataIndex].detail.activities.statusIndex == index ? 1 : 0.6, }">
+                                    <span style="font-size: 1.3em;">{{ activity.title }}</span>
+                                    <span style="font-size: 0.8em;" :style="{ color: activity.color }">{{
+                activity.subTitle
+            }}</span>
+                                </el-card>
+                            </el-timeline-item>
+                        </el-timeline>
+                        <div style="width: max-content;height: max-content;transform: translateX(-30px);">
+                            <div>
+                                <el-upload action="#" list-type="picture-card" :auto-upload="false"
+                                    :file-list="tableData[showDataIndex].detail.fileList" disabled
+                                    style="max-width: 320px;">
+                                    <template #file="{ file }">
+                                        <template v-if="file.type == 'image'">
+                                            <div style="width: 100%;height: 100%;">
+                                                <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                                                <span class="el-upload-list__item-actions">
+                                                    <span class="el-upload-list__item-preview"
+                                                        @click="handlePictureCardPreview(file)">
+                                                        <el-icon><zoom-in /></el-icon>
+                                                    </span>
+                                                    <span v-if="!disabled" class="el-upload-list__item-delete"
+                                                        @click="handleDownload(file)">
+                                                        <el-icon>
+                                                            <Download />
+                                                        </el-icon>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </template>
+                                        <!-- <template v-else>
+                                            <preViewPDF :url="file.url"></preViewPDF>
+                                        </template> -->
+                                    </template>
+
+                                </el-upload>
+                            </div>
+                            <el-button type="primary" @click=""
+                                v-if="tableData[showDataIndex].detail.activities.statusIndex == 0">撤回提交</el-button>
+                            <el-button type="primary" @click="showForm">关闭</el-button>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- 蒙层 -->
                 <div style="position: absolute;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.45);"
                     @click="showForm">
                 </div>
+                <el-dialog v-model="dialogVisible" style="z-index:100 ;">
+                    <img w-full :src="dialogImageUrl" alt="Preview Image" />
+                </el-dialog>
             </div>
         </teleport>
     </div>
 </template>
 
-<style lang='css'></style>
+<style lang='css'>
+.el-upload--picture-card {
+    /* 隐藏 */
+    display: none;
+}
+</style>

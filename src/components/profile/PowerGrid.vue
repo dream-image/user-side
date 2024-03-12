@@ -87,7 +87,7 @@ const cellRenderer = ({ rowData, column }) => {
         }
     }
 
-    return rowData?.editing[column?.dataKey] ? (
+    return !props.disabled && rowData?.editing[column?.dataKey] ? (
         <div>
             <InputCell
                 forwardRef={setRef}
