@@ -304,6 +304,7 @@ function deleteFile(file) {
                         ref="uploadRef" :before-upload="(e) => beforeAvatarUpload(e)" :on-preview="handlePreview"
                         :on-remove="handleRemove" list-type="picture">
                         <template #file="{ file }">
+                            {{ console.log(file) }}
                             <template v-if="file.raw.type.indexOf('image') != -1">
                                 <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7"
                                     :src="file.url" :min-scale="0.2" :initial-index="4" fit="cover"
