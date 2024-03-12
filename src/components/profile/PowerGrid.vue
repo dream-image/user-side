@@ -45,7 +45,7 @@ const InputCell = ({
     forwardRef,
 }) => {
     return (
-        <el-input ref={forwardRef} onInput={onChange} modelValue={value} type="number" step="0.01" min={0} clearable />
+        <el-input ref={forwardRef} onInput={onChange} modelValue={value} type="number" step="0.0001" min={0} clearable />
     )
 }
 const cellRenderer = ({ rowData, column }) => {
@@ -179,7 +179,7 @@ watchEffect(() => {
     let ESF6 = data.value.reduce((total, cur, index) => {
         return total + (cur.设备容量1 - cur.实际回收量1) * 1 + (cur.设备容量2 - cur.实际回收量2) * 1
     }, 0)
-    form.tCO2 = ((E网损 + ESF6) * 1).toFixed(2) * 1
+    form.tCO2 = ((E网损 + ESF6) * 1).toFixed(4) * 1
 })
 
 
@@ -201,22 +201,22 @@ onUnmounted(() => {
         <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto"
             class="demo-form-inline" label-position="right" status-icon :rules="rules">
             <el-form-item label="电厂上网电量(兆瓦时):" required prop="EL上网">
-                <el-input v-model="form.EL上网" style="" type="number" step="0.01" :min="0" clearable></el-input>
+                <el-input v-model="form.EL上网" style="" type="number" step="0.0001" :min="0" clearable></el-input>
             </el-form-item>
             <el-form-item label="自外省输入电量(兆瓦时):" required prop="EL输入">
-                <el-input v-model="form.EL输入" style="" required type="number" step="0.01" :min="0" clearable></el-input>
+                <el-input v-model="form.EL输入" style="" required type="number" step="0.0001" :min="0" clearable></el-input>
             </el-form-item>
             <el-form-item label="向外省输出电量(兆瓦时):" required prop="EL输出">
-                <el-input v-model="form.EL输出" style="" type="number" step="0.01" :min="0" clearable></el-input>
+                <el-input v-model="form.EL输出" style="" type="number" step="0.0001" :min="0" clearable></el-input>
             </el-form-item>
             <el-form-item label="用户用电量(兆瓦时):" required prop="EL售电">
-                <el-input v-model="form.EL售电" style="" type="number" step="0.01" :min="0" clearable></el-input>
+                <el-input v-model="form.EL售电" style="" type="number" step="0.0001" :min="0" clearable></el-input>
             </el-form-item>
             <el-form-item label="区域电网年平均供电排放因子(吨二氧化碳/兆瓦时):" required>
-                <el-input :value="props.coefficient" style="" disabled type="number" step="0.01"></el-input>
+                <el-input :value="props.coefficient" style="" disabled type="number" step="0.0001"></el-input>
             </el-form-item>
             <el-form-item label="碳排放总和" prop="tCO2">
-                <el-input v-model="form.tCO2" style="" disabled type="number" step="0.01"></el-input>
+                <el-input v-model="form.tCO2" style="" disabled type="number" step="0.0001"></el-input>
                 <el-link href="/2、《中国电网企业温室气体排放核算方法与报告指南（试行）》.pdf" type="info"
                     style="font-size: 8px;position: absolute;transform: translateY(100%);"
                     download="《中国电网企业温室气体排放核算方法与报告指南（试行）》.pdf">碳排放总和计算参考资料</el-link>

@@ -1,0 +1,41 @@
+<svg viewBox="0 0 1024 1024" height="1024" width="1024" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient gradientUnits="objectBoundingBox" y2="1" x2="0.5" x1="0.5" id="linear-gradient">
+      <stop stop-color="#e1e1e1" offset="0"></stop>
+      <stop stop-opacity="0" stop-color="#fff" offset="1"></stop>
+    </linearGradient>
+    <linearGradient gradientUnits="objectBoundingBox" y2="1" x2="0.5" x1="0.5" id="linear-gradient-2">
+      <stop stop-color="#e2e2e2" offset="0"></stop>
+      <stop stop-color="#bcbcbc" offset="1"></stop>
+    </linearGradient>
+    <clipPath id="clip-没有找到相关结果">
+      <rect height="1024" width="1024"></rect>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#clip-没有找到相关结果)" id="没有找到相关结果">
+    <rect fill="#fff" height="1024" width="1024"></rect>
+    <g transform="translate(-160 44.68)" id="暂无搜索记录">
+      <ellipse fill="url(#linear-gradient)" transform="translate(160 527.07)" ry="225.922" rx="512" cy="225.922" cx="512" id="椭圆_1"></ellipse>
+      <g transform="translate(333.195 451.74)" id="组_2">
+        <rect fill="#c5c5c5" transform="translate(38.022 107.413)" height="66.841" width="8.021" id="矩形_4"></rect>
+        <path fill="url(#linear-gradient-2)" transform="translate(0 6)" d="M42.27-6S84.54,41.1,84.54,64.45A42.27,42.27,0,0,1,0,64.45C0,41.1,42.27-6,42.27-6Z" id="路径_3"></path>
+      </g>
+      <g transform="translate(928.489 497.317)" id="组_3">
+        <rect fill="#c5c5c5" transform="translate(30.926 91.246)" height="56.146" width="8.021" id="矩形_4-2"></rect>
+        <path fill="url(#linear-gradient-2)" transform="translate(0 6)" d="M36.094-6S72.188,34.233,72.188,54.173A36.094,36.094,0,1,1,0,54.173C0,34.233,36.094-6,36.094-6Z" id="路径_3-2"></path>
+      </g>
+      <g transform="translate(1024.181 580.791)" id="组_4">
+        <rect fill="#c5c5c5" transform="translate(16.892 51.943)" height="31.797" width="5.299" id="矩形_4-3"></rect>
+        <path fill="url(#linear-gradient-2)" transform="translate(0 6)" d="M20.37-6s20.37,22.7,20.37,33.955A20.37,20.37,0,0,1,0,27.955C0,16.7,20.37-6,20.37-6Z" id="路径_3-3"></path>
+      </g>
+      <path fill="#d1d1d1" transform="translate(1050.936 1237)" d="M-250.6-625.136H-558.069A37.189,37.189,0,0,1-584.538-636.1,37.184,37.184,0,0,1-595.5-662.567v-366.287a37.184,37.184,0,0,1,10.962-26.469,37.187,37.187,0,0,1,26.469-10.962H-250.6a37.186,37.186,0,0,1,26.469,10.962,37.187,37.187,0,0,1,10.962,26.469v366.287A37.187,37.187,0,0,1-224.133-636.1,37.181,37.181,0,0,1-250.6-625.136ZM-527.322-788.228A17.4,17.4,0,0,0-544.7-770.849a17.4,17.4,0,0,0,17.379,17.378h245.974a17.4,17.4,0,0,0,17.379-17.379,17.4,17.4,0,0,0-17.379-17.379Zm0-104.271A17.4,17.4,0,0,0-544.7-875.121a17.4,17.4,0,0,0,17.379,17.379h245.974A17.4,17.4,0,0,0-263.97-875.12,17.4,17.4,0,0,0-281.348-892.5Zm0-104.271A17.4,17.4,0,0,0-544.7-979.392a17.4,17.4,0,0,0,17.379,17.379h245.974a17.4,17.4,0,0,0,17.379-17.379,17.4,17.4,0,0,0-17.378-17.378Z" id="减去_13"></path>
+      <rect fill="#bfbfbf" transform="translate(718.642 535.128) rotate(-45)" rx="10" height="243.3" width="53.473" id="矩形_39"></rect>
+      <circle opacity="0.46" fill="#fff" transform="translate(613.18 392.623)" r="141.702" cy="141.702" cx="141.702" id="椭圆_27"></circle>
+      <g opacity="0.46" stroke-width="1" stroke="#a4a4a4" fill="none" transform="translate(613.18 392.623)" id="椭圆_28">
+        <circle stroke="none" r="141.702" cy="141.702" cx="141.702"></circle>
+        <circle fill="none" r="141.202" cy="141.702" cx="141.702"></circle>
+      </g>
+      <circle fill="#fff" transform="translate(696.063 475.506)" r="58.82" cy="58.82" cx="58.82" id="椭圆_29"></circle>
+    </g>
+  </g>
+</svg>

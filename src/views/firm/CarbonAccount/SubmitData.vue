@@ -1,6 +1,12 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
 import { ElMessageBox, ElMessage } from 'element-plus'
+import auditingPicture from '@/assets/审核中.svg'
+import hasPassPicture from '@/assets/没有找到相关结果.svg'
+import { useUserInfoStore } from "@/stores/user"
+import { storeToRefs } from "pinia";
+const { userInfo } = storeToRefs(useUserInfoStore())
+
 const itemList = [
     {
         value: "电网",
@@ -219,17 +225,23 @@ function submit() {
 
 </script>
 <template>
-    <div style="height: 100%;width: 100%;position: relative;">
+    <el-empty v-if="userInfo.auditing"
+        :image="auditingPicture" description="您已经有报告在审核中，请等待审核结果" />
+    <el-empty v-else-if="userInfo.hasPass"
+        :image="hasPassPicture" description="您今年的报告已通过，不用再重复提交" />
+    
+    <div style="height: 100%;width: 100%;position: relative;" v-else>
         <div style="position: absolute;display: flex;flex-direction: column;gap: 8px;width: 98%;">
             <span style="font-size: 20px;">提交资料</span>
             <span style="font-size: 10px;">一年核算一次
-                <el-link type="info" style="font-size: 8px;" href="/碳排放因子参考文献.pdf" download="参考文献.pdf">区域电网年平均供电排放因子参考文献</el-link>
+                <el-link type="info" style="font-size: 8px;" href="/碳排放因子参考文献.pdf"
+                    download="参考文献.pdf">区域电网年平均供电排放因子参考文献</el-link>
             </span>
             <el-select v-model="chooseWhatItem" placeholder="选择报告类型"
                 style="width: 240px;position: absolute;left: 100px;" clearable>
                 <el-option v-for="item in itemList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
-            <el-select v-model="chooseWhatProvince" placeholder="选择所在省份"  filterable no-match-text="没有匹配的省份"
+            <el-select v-model="chooseWhatProvince" placeholder="选择所在省份" filterable no-match-text="没有匹配的省份"
                 style="width: 150px;position: absolute;left: 370px;" clearable>
                 <el-option v-for="item in coefficient" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
@@ -242,8 +254,8 @@ function submit() {
 
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
-            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince"
-                v-if="chooseWhatItem === '电网'"></PowerGrid>
+            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" v-if="chooseWhatItem === '电网'">
+            </PowerGrid>
         </div>
 
         <!-- 上传图片/pdf的抽屉 -->

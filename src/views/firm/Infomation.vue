@@ -149,7 +149,8 @@ function onSubmit() {
 
                 <!-- 蒙层 -->
                 <div style="position: absolute;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.45);"
-                    @click="showForm"></div>
+                    @click="showForm">
+                </div>
             </div>
         </teleport>
     </div>
