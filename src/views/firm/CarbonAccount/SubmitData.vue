@@ -254,7 +254,7 @@ function submit() {
 
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
-            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" v-if="chooseWhatItem === '电网'">
+            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disable="false" v-if="chooseWhatItem === '电网'">
             </PowerGrid>
         </div>
 

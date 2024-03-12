@@ -1,8 +1,16 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
 import { TableV2FixedDir } from 'element-plus';
-const showWhatComponentOfDetail = ref('')
+import { MoreFilled } from '@element-plus/icons-vue'
+import { shallowRef } from 'vue';
+const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
+
+// 每个导入的资料类型的组件都必须放到这个对象里面，解决被解析后组件变为小写标签
+const componentsObj = {
+    'PowerGrid': PowerGrid
+}
+
 
 // 这个里面的数据应该从后端获取，现在只是写死并附上格式
 const tableData = reactive([
@@ -18,6 +26,7 @@ const tableData = reactive([
         reallyGetCarbon: "182",
         detail: { //这detail里面应该附上 mode(就是是哪个类型的,这里的PowerGrid是电网，然后依据类型附上相应字段以及值,注意：这里的类型名字一定要和对应组件名一样)
             mode: 'PowerGrid',
+            chooseWhatProvince: "0.123",//填表的时候选的那个省份对应的系数
             data: { //这里放表格以外的数据
                 EL上网: "1.1234",
                 EL输入: "4.1111",
@@ -28,18 +37,24 @@ const tableData = reactive([
             },
             form: [// 放表格数据
                 {
-                    修理设备: "1",
+                    修理设备: 1,
                     设备容量1: "17",
                     实际回收量1: "14",
-                    退役设备: "1",
+                    退役设备: 1,
+                    editing: { //这个字段 就一直为空对象
+
+                    },
                     设备容量2: "11",
                     实际回收量2: "6",
                 },
                 {
-                    修理设备: "2",
+                    修理设备: 2,
                     设备容量1: "33",
                     实际回收量1: "32",
-                    退役设备: "2",
+                    退役设备: 2,
+                    editing: {
+
+                    },
                     设备容量2: "44",
                     实际回收量2: "43",
                 }
@@ -58,6 +73,7 @@ const tableData = reactive([
         reallyGetCarbon: "182",
         detail: {
             mode: 'PowerGrid',
+            chooseWhatProvince: "0.222",
             data: { //这里放表格以外的数据
                 EL上网: "1.1234",
                 EL输入: "4.1111",
@@ -68,18 +84,24 @@ const tableData = reactive([
             },
             form: [// 放表格数据
                 {
-                    修理设备: "1",
+                    修理设备: 1,
                     设备容量1: "17",
                     实际回收量1: "14",
-                    退役设备: "1",
+                    退役设备: 1,
+                    editing: {
+
+                    },
                     设备容量2: "11",
                     实际回收量2: "6",
                 },
                 {
-                    修理设备: "2",
+                    修理设备: 2,
                     设备容量1: "33",
                     实际回收量1: "32",
-                    退役设备: "2",
+                    退役设备: 2,
+                    editing: {
+
+                    },
                     设备容量2: "44",
                     实际回收量2: "43",
                 }
@@ -96,6 +118,42 @@ const tableData = reactive([
         carbonCredits: "200",
         expendCarbon: "18",
         reallyGetCarbon: "182",
+        detail: {
+            mode: 'PowerGrid',
+            chooseWhatProvince: "0.222",
+            data: { //这里放表格以外的数据
+                EL上网: "1.1234",
+                EL输入: "4.1111",
+                EL输出: "512.3331",
+                EL售电: "42.1345",
+                EL电网: "",
+                tCO2: "",
+            },
+            form: [// 放表格数据
+                {
+                    修理设备: 1,
+                    设备容量1: "17",
+                    实际回收量1: "14",
+                    退役设备: 1,
+                    editing: {
+
+                    },
+                    设备容量2: "11",
+                    实际回收量2: "6",
+                },
+                {
+                    修理设备: 2,
+                    设备容量1: "33",
+                    实际回收量1: "32",
+                    退役设备: 2,
+                    editing: {
+
+                    },
+                    设备容量2: "44",
+                    实际回收量2: "43",
+                }
+            ],
+        }
     },
     {
         id: "97c35d19-9893-4292-8dbc-ac27fcc1fb41",
@@ -107,6 +165,42 @@ const tableData = reactive([
         carbonCredits: "200",
         expendCarbon: "18",
         reallyGetCarbon: "182",
+        detail: {
+            mode: 'PowerGrid',
+            chooseWhatProvince: "0.222",
+            data: { //这里放表格以外的数据
+                EL上网: "1.1234",
+                EL输入: "4.1111",
+                EL输出: "512.3331",
+                EL售电: "42.1345",
+                EL电网: "",
+                tCO2: "",
+            },
+            form: [// 放表格数据
+                {
+                    修理设备: 1,
+                    设备容量1: "17",
+                    实际回收量1: "14",
+                    退役设备: 1,
+                    editing: {
+
+                    },
+                    设备容量2: "11",
+                    实际回收量2: "6",
+                },
+                {
+                    修理设备: 2,
+                    设备容量1: "33",
+                    实际回收量1: "32",
+                    退役设备: 2,
+                    editing: {
+
+                    },
+                    设备容量2: "44",
+                    实际回收量2: "43",
+                }
+            ],
+        }
     },
 ])
 const tableRowClassNameBystatus = ({
@@ -131,9 +225,34 @@ function showDetail(scope) {
     console.log(scope)
     isShowDetail.value = !isShowDetail.value
     showDataIndex.value = scope.$index
-    showWhatComponentOfDetail.value = tableData[scope.$index].detail.mode
+    showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
     console.log(showWhatComponentOfDetail.value)
 }
+
+function showForm() {
+    isShowDetail.value = !isShowDetail.value
+}
+
+const activities = [
+    {
+        content: 'Custom icon',
+        timestamp: '2018-04-12 20:46',
+        size: 'large',
+        type: 'primary',
+        icon: MoreFilled,
+    },
+    {
+        content: 'Custom color',
+        timestamp: '2018-04-03 20:46',
+        color: '#0bbd87',
+    },
+    {
+        content: 'Custom hollow',
+        timestamp: '2018-04-03 20:46',
+        type: 'primary',
+        hollow: true,
+    },
+]
 </script>
 
 <template>
@@ -164,13 +283,22 @@ function showDetail(scope) {
                 </el-table-column>
             </el-table>
         </div>
-        <teleport to='body' v-if="isShowDetail">
-            <div style="position: absolute;width: 100%;height: 100%;z-index: 9;">
-                <div style="position: absolute;left: 0;right: 0;top: 0;bottom:0;margin: auto;width: max-content;height:max-content;
+        <teleport to='body'>
+            <div style="position: absolute;width: 100%;height: 100%;z-index: 9;" v-if="isShowDetail">
+                <div style="position: absolute;left: 0;right: 0;top: 0;bottom:0;margin: auto;width: max-content;height:600px;overflow: auto;
                 background-color: white;padding: 10px 10px;border-radius: 8px;z-index: 9999;">
-                    <component :is="showWhatComponentOfDetail"></component>
+                    <component :is="showWhatComponentOfDetail" :disabled="true" style="height: 600px;width: 1000px;"
+                        :coefficient="tableData[showDataIndex].detail.chooseWhatProvince"
+                        :data="tableData[showDataIndex].detail.data" :form="tableData[showDataIndex].detail.form">
+                    </component>
+                    <el-timeline style="max-width: 600px">
+                        <el-timeline-item v-for="(activity, index) in activities" :key="index" :icon="activity.icon"
+                            :type="activity.type" :color="activity.color" :size="activity.size"
+                            :hollow="activity.hollow" :timestamp="activity.timestamp">
+                            {{ activity.content }}
+                        </el-timeline-item>
+                    </el-timeline>
                 </div>
-
                 <!-- 蒙层 -->
                 <div style="position: absolute;width: 100%;height: 100%;background-color: rgba(0, 0, 0, 0.45);"
                     @click="showForm">

@@ -1,13 +1,26 @@
 <script setup lang="jsx">
-import { onMounted, onUnmounted, watchEffect } from 'vue';
+import { onMounted, onUnmounted, watch, watchEffect } from 'vue';
 const props = defineProps({
     coefficient: {
         type: [String, Number],
         required: true,
         default: 1
+    },
+    disabled: {
+        type: Boolean,
+        default: false
+    },
+    data: { //这个放那个表格外的数据字段
+        type: Object,
+        required: false,
+        default: {}
+    },
+    form: { //这个放表格数据
+        type: Array,
+        required: false,
+        default: []
     }
 })
-
 const form = reactive({
     EL上网: "",
     EL输入: "",
@@ -15,6 +28,15 @@ const form = reactive({
     EL售电: "",
     EL电网: "",
     tCO2: ""
+})
+
+onMounted(() => {
+    if (Object.keys(props.data).length > 0) {
+        let a = Object.assign(form, props.data)
+        Object.keys(form).forEach(i => {
+            form[i] = props.data[i]
+        })
+    }
 })
 
 const rule = [{
@@ -45,7 +67,7 @@ const InputCell = ({
     forwardRef,
 }) => {
     return (
-        <el-input ref={forwardRef} onInput={onChange} modelValue={value} type="number" step="0.0001" min={0} clearable />
+        <el-input ref={forwardRef} onInput={onChange} modelValue={value} type="number" step="0.0001" min={0} clearable disabled={props.disabled} />
     )
 }
 const cellRenderer = ({ rowData, column }) => {
@@ -65,7 +87,7 @@ const cellRenderer = ({ rowData, column }) => {
         }
     }
 
-    return rowData.editing[column.dataKey] ? (
+    return rowData?.editing[column?.dataKey] ? (
         <div>
             <InputCell
                 forwardRef={setRef}
@@ -143,8 +165,6 @@ const generateData = (
                 return rowData
             },
             {
-                id: `${prefix}${rowIndex}`,
-                parentId: null,
             }
         )
     })
@@ -157,10 +177,14 @@ const generateData = (
 
 const tableWrapperDom = ref(null)
 const data = ref(generateData(columns, 6))
+onMounted(() => {
+    if (props.form.length > 0) {
+        data.value = props.form
+    }
+    // console.log(data.value)
+})
 function addData() {
     data.value.push({
-        "id": data.value.length,
-        "parentId": null,
         "修理设备": data.value.length + 1,
         "editing": {
 
@@ -201,16 +225,20 @@ onUnmounted(() => {
         <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto"
             class="demo-form-inline" label-position="right" status-icon :rules="rules">
             <el-form-item label="电厂上网电量(兆瓦时):" required prop="EL上网">
-                <el-input v-model="form.EL上网" style="" type="number" step="0.0001" :min="0" clearable></el-input>
+                <el-input v-model="form.EL上网" style="" type="number" step="0.0001" :min="0" clearable
+                    :disabled="props.disabled"></el-input>
             </el-form-item>
             <el-form-item label="自外省输入电量(兆瓦时):" required prop="EL输入">
-                <el-input v-model="form.EL输入" style="" required type="number" step="0.0001" :min="0" clearable></el-input>
+                <el-input v-model="form.EL输入" style="" required type="number" step="0.0001" :min="0" clearable
+                    :disabled="props.disabled"></el-input>
             </el-form-item>
             <el-form-item label="向外省输出电量(兆瓦时):" required prop="EL输出">
-                <el-input v-model="form.EL输出" style="" type="number" step="0.0001" :min="0" clearable></el-input>
+                <el-input v-model="form.EL输出" style="" type="number" step="0.0001" :min="0" clearable
+                    :disabled="props.disabled"></el-input>
             </el-form-item>
             <el-form-item label="用户用电量(兆瓦时):" required prop="EL售电">
-                <el-input v-model="form.EL售电" style="" type="number" step="0.0001" :min="0" clearable></el-input>
+                <el-input v-model="form.EL售电" style="" type="number" step="0.0001" :min="0" clearable
+                    :disabled="props.disabled"></el-input>
             </el-form-item>
             <el-form-item label="区域电网年平均供电排放因子(吨二氧化碳/兆瓦时):" required>
                 <el-input :value="props.coefficient" style="" disabled type="number" step="0.0001"></el-input>
@@ -225,7 +253,7 @@ onUnmounted(() => {
         <div style="width: 100%;height: max-content;overflow: visible;position:relative;"
             class=" border-solid border-slate-300 border" ref="">
             <el-button style="position: absolute;right: 0;z-index: 1;transform: translateY(-35px);" @click="addData"
-                type="primary" circle>
+                v-if="!props.disabled" type="primary" circle>
                 <el-icon size="35px">
                     <CirclePlus />
                 </el-icon>
