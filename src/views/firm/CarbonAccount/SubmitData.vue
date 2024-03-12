@@ -1,11 +1,14 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
+import preViewPDF from '@/components/preViewPDF.vue';
 import { ElMessageBox, ElMessage } from 'element-plus'
 import auditingPicture from '@/assets/审核中.svg'
 import hasPassPicture from '@/assets/没有找到相关结果.svg'
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import { Delete, Download, Plus, ZoomIn, Close } from '@element-plus/icons-vue'
+import PDF from '@/assets/PDF.svg'
+
 const { userInfo } = storeToRefs(useUserInfoStore())
 
 
@@ -259,6 +262,12 @@ function submit() {
 function deleteFile(file) {
     fileList.value = fileList.value.filter(item => item.uid !== file.uid);
 }
+const pdfVisible = ref(false)
+const pdfUrl = ref('')
+function showPDF(url) {
+    pdfVisible.value = !pdfVisible.value
+    pdfUrl.value = url
+}
 </script>
 <template>
     <el-empty v-if="userInfo.auditing" :image="auditingPicture" description="您已经有报告在审核中，请等待审核结果" />
@@ -304,11 +313,10 @@ function deleteFile(file) {
                         ref="uploadRef" :before-upload="(e) => beforeAvatarUpload(e)" :on-preview="handlePreview"
                         :on-remove="handleRemove" list-type="picture">
                         <template #file="{ file }">
-                            {{ console.log(file) }}
                             <template v-if="file.raw.type.indexOf('image') != -1">
                                 <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7"
                                     :src="file.url" :min-scale="0.2" :initial-index="4" fit="cover"
-                                    :preview-src-list="fileList.map(i => i.url)" />
+                                    :preview-src-list="fileList.filter(i => i.raw.type.indexOf('image') !== -1).map(i => i.url)" />
                                 <span style="margin-left: 25px;">{{ file.name }}</span>
                                 <el-icon
                                     style="position: absolute;right: 2px;top: 2px;width: 20px;height: 20px;opacity: 0.8;cursor: pointer;"
@@ -316,7 +324,16 @@ function deleteFile(file) {
                                     <Close />
                                 </el-icon>
                             </template>
-
+                            <template v-else>
+                                <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7"
+                                    :src="PDF" :min-scale="0.2" :initial-index="4" fit="cover" @click="showPDF(file.url)" />
+                                <span style="margin-left: 25px;">{{ file.name }}</span>
+                                <el-icon
+                                    style="position: absolute;right: 2px;top: 2px;width: 20px;height: 20px;opacity: 0.8;cursor: pointer;"
+                                    id="deleteIcon" @click="deleteFile(file)">
+                                    <Close />
+                                </el-icon>
+                            </template>
                         </template>
                         <el-button type="primary">点击或拖入上传</el-button>
                         <template #tip>
@@ -334,6 +351,9 @@ function deleteFile(file) {
                 </div>
             </template>
         </el-drawer>
+        <el-dialog v-model="pdfVisible" style="z-index:100 ;" v-if="pdfVisible">
+            <preViewPDF :url="pdfUrl"></preViewPDF>
+        </el-dialog>
     </div>
 
 
