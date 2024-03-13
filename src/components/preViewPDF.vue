@@ -26,42 +26,37 @@
     </div>
 </template>
 
-<script>
-import VuePdfEmbed from 'vue-pdf-embed'
-
+<script setup>
 // OR THE FOLLOWING IMPORT FOR VUE 2
 // import VuePdfEmbed from 'vue-pdf-embed/dist/vue2-pdf-embed'
-
-export default {
-    components: {
-        VuePdfEmbed
-    },
-    props: ['url'],
-    data() {
-        return {
-            isLoading: true,
-            page: null,
-            pageCount: 1,
-            pdfSource: this.props.url,
-            showAllPages: true
-        }
-    },
-    watch: {
-        showAllPages() {
-            this.page = this.showAllPages ? null : 1
-        }
-    },
-    methods: {
-        handleDocumentRender(args) {
-            // console.log(args)
-            this.isLoading = false
-            this.pageCount = this.$refs.pdfRef.pageCount
-        },
-        handlePasswordRequest(callback, retry) {
-            callback(prompt(retry ? '请再次输入密码' : '请输入密码'))
-        }
+import {ref,watchEffect} from 'vue'
+import VuePdfEmbed from 'vue-pdf-embed'
+const props = defineProps({
+    url: {
+        type: String,
+        required: true
     }
+})
+
+const isLoading = ref(
+    true )
+const page = ref(null)
+const pageCount = ref(1)
+const pdfSource = ref(props.url)
+const showAllPages = ref(false)
+watchEffect(() => {
+    page.value = showAllPages.value ? null : 1
+})
+const pdfRef = ref(null)
+function handleDocumentRender(a) {
+    console.log(a)
+    isLoading.value = false
+    pageCount.vlaue = pdfRef.pageCount
 }
+function handlePasswordRequest(callback, retry) {
+    callback(prompt(retry ? '请再次输入密码' : '请输入密码'))
+}
+
 </script>
 <style lang="css" scoped>
 body {

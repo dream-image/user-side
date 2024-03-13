@@ -3,7 +3,7 @@ import PowerGrid from '@/components/profile/PowerGrid.vue';
 import { TableV2FixedDir } from 'element-plus';
 import { MoreFilled } from '@element-plus/icons-vue'
 import { shallowRef } from 'vue';
-// import preViewPDF from '@/components/preViewPDF.vue';
+import preViewPDF from '@/components/preViewPDF.vue';
 import PDF from "@/assets/PDF.svg"
 const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
@@ -139,6 +139,11 @@ const tableData = reactive([
                 ]
             },
             fileList: [
+                // {  数据类型示例
+                //     url:"",
+                //     name:"",
+                //     type:""
+                // }
 
             ]
         }
@@ -373,7 +378,7 @@ const tableRowClassNameBystatus = ({
 const showDataIndex = ref(0)
 //点击查看详细处理
 function showDetail(scope) {
-    console.log(scope)
+    // console.log(scope)
     isShowDetail.value = !isShowDetail.value
     showDataIndex.value = scope.$index
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
@@ -389,7 +394,8 @@ function showForm() {
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const disabled = ref(false)
-
+const pdfVisible = ref(false)
+const pdfUrl = ref('')
 const handlePictureCardPreview = (file) => {
     dialogImageUrl.value = file.url
     dialogVisible.value = true
@@ -397,6 +403,10 @@ const handlePictureCardPreview = (file) => {
 
 const handleDownload = (file) => {
     console.log(file)
+}
+function showPDF(url) {
+    pdfVisible.value = !pdfVisible.value
+    pdfUrl.value = url
 }
 </script>
 
@@ -460,7 +470,8 @@ const handleDownload = (file) => {
                                     <template #file="{ file }">
                                         <template v-if="file.type == 'image'">
                                             <div style="width: 100%;height: 100%;">
-                                                <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
+                                                <img class="el-upload-list__item-thumbnail" :src="file.url"
+                                                    :alt="file.name" />
                                                 <span class="el-upload-list__item-actions">
                                                     <span class="el-upload-list__item-preview"
                                                         @click="handlePictureCardPreview(file)">
@@ -475,9 +486,24 @@ const handleDownload = (file) => {
                                                 </span>
                                             </div>
                                         </template>
-                                        <!-- <template v-else>
-                                            <preViewPDF :url="file.url"></preViewPDF>
-                                        </template> -->
+                                        <template v-else>
+                                            <span
+                                                style="position: absolute;width: 100%;height: max-content;text-align: center;font-size: 1.3em;font-weight: bold;">{{
+                file.name }}</span>
+                                            <img class="el-upload-list__item-thumbnail" style="transform: scale(0.3);"
+                                                :src="PDF" alt="" />
+                                            <span class="el-upload-list__item-actions">
+                                                <span class="el-upload-list__item-preview" @click="showPDF(file)">
+                                                    <el-icon><zoom-in /></el-icon>
+                                                </span>
+                                                <span v-if="!disabled" class="el-upload-list__item-delete"
+                                                    @click="handleDownload(file)">
+                                                    <el-icon>
+                                                        <Download />
+                                                    </el-icon>
+                                                </span>
+                                            </span>
+                                        </template>
                                     </template>
 
                                 </el-upload>
@@ -495,6 +521,9 @@ const handleDownload = (file) => {
                 </div>
                 <el-dialog v-model="dialogVisible" style="z-index:100 ;">
                     <img w-full :src="dialogImageUrl" alt="Preview Image" />
+                </el-dialog>
+                <el-dialog v-model="pdfVisible" v-if="pdfVisible" style="z-index:100 ;">
+                    <preViewPDF :url="pdfUrl"></preViewPDF>
                 </el-dialog>
             </div>
         </teleport>
