@@ -184,6 +184,7 @@ const priceTableDate = ref('24小时')
                 <span style="position: absolute;font-size: 18px;">持有碳币和RMB变化图</span>
                 <div>
                     <!-- 这里放echarts的图 -->
+                    
                 </div>
             </div>
             <!-- 交易框 -->
