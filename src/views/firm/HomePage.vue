@@ -105,149 +105,37 @@ const priceTableDate = ref('24小时')
 // 接下里这里放echarts内容
 
 import * as echarts from 'echarts';
+import debounce from '@/utils/debounce';
 const CarboncoinImgDom = ref(null)
 const infoImgDom = ref(null)
+let ob
 onMounted(() => {
 
+    let infoImg
+    let carboncoinImg
     setTimeout(() => {
 
-        const infoImg = echarts.init(infoImgDom.value)
+        infoImg = echarts.init(infoImgDom.value)
+        infoImg.clear()
         // 注意：这个初始化一定要确保对应的DOM里面的style没有利用DOM节点数据实时计算大小，不然执行到初始化的时候，实际上节点的style还处于未计算的状态，导致图形大小不正确
         let base = +new Date(2000, 9, 3);
         let oneDay = 24 * 3600 * 1000;
-        let date = [Math.round((Math.random() - 0.5) * 20)];
-        let data = [Math.round((Math.random() - 0.5) * 20)];
-        let data2 = []
-        var xAxisData = [];
-        for (let i = 1; i < 200; i++) {
+        let date = [];
+        let data = [Math.random() * 300];
+        for (let i = 1; i < 2000; i++) {
             var now = new Date((base += oneDay));
-            xAxisData.push(i);
             date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
             data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-            data2.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-            // data.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5);
-            // data2.push((Math.sin(i / 5) * (i / 5 + 10) + i / 6) * 3);
         }
         // console.log(data)
         let option = {
-            // backgroundColor: '#08263a',
-            grid: { // 让图表占满容器
-                top: "0px",
-                left: "0px",
-                right: "0px",
-                bottom: "0px"
+            animationDuration: function (idx) {
+                // 越往后的数据时长越大
+                return 2000;
             },
-
-            xAxis: [{
-                show: false,
-                data: xAxisData
-            }, {
-                show: false,
-                data: xAxisData
-            }],
-            visualMap: {
-                show: false,
-                min: 0,
-                max: 50,
-                dimension: 0,
-                inRange: {
-                    color: ['#4a657a', '#308e92', '#b1cfa5', '#f5d69f', '#f5898b', '#ef5055']
-                }
+            animationEasing: function (k) {
+                return k;
             },
-            yAxis: {
-                axisLine: {
-                    show: false
-                },
-                axisLabel: {
-                    textStyle: {
-                        color: '#4a657a'
-                    }
-                },
-                splitLine: {
-                    show: true,
-                    lineStyle: {
-                        color: '#08263f'
-                    }
-                },
-                axisTick: {
-                    show: false
-                }
-            },
-            series: [{
-                name: 'back',
-                type: 'bar',
-                data: data2,
-                z: 1,
-                itemStyle: {
-                    normal: {
-                        opacity: 0.4,
-                        barBorderRadius: 5,
-                        shadowBlur: 3,
-                        shadowColor: '#111'
-                    }
-                }
-            }, {
-                name: 'Simulate Shadow',
-                type: 'line',
-                data: data,
-                z: 2,
-                showSymbol: false,
-                animationDelay: 0,
-                animationEasing: 'linear',
-                animationDuration: 1200,
-                lineStyle: {
-                    normal: {
-                        color: 'transparent'
-                    }
-                },
-                areaStyle: {
-                    normal: {
-                        color: '#08263a',
-                        shadowBlur: 50,
-                        shadowColor: '#000'
-                    }
-                }
-            }, {
-                name: 'front',
-                type: 'bar',
-                data: data,
-                xAxisIndex: 1,
-                z: 3,
-                itemStyle: {
-                    normal: {
-                        barBorderRadius: 5
-                    }
-                }
-            }],
-            animationEasing: 'elasticOut',
-            animationEasingUpdate: 'elasticOut',
-            animationDelay: function (idx) {
-                return idx * 20;
-            },
-            animationDelayUpdate: function (idx) {
-                return idx * 20;
-            }
-        };
-        option && infoImg.setOption(option);
-    }, 0);
-    setTimeout(() => {
-
-        const carboncoinImg = echarts.init(CarboncoinImgDom.value, null, {
-            renderer: 'svg'
-        });
-        let base = +new Date(1968, 9, 3);
-        let oneDay = 24 * 3600 * 1000;
-        let date = [];
-        let data = [Math.random() * 300];
-        let data1 = [Math.random() * 300]
-        for (let i = 1; i < 200; i++) {
-            var now = new Date((base += oneDay));
-            date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-            data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-            data1.push(Math.round((Math.random() - 0.5) * 20 + data1[i - 1]));
-        }
-        let option = {
-            animationDuration: 1000,
             grid: { // 让图表占满容器
                 top: "20px",
                 left: "40px",
@@ -256,9 +144,7 @@ onMounted(() => {
             },
             tooltip: {
                 trigger: 'axis',
-                position: function (pt) {
-                    return [pt[0], '100%'];
-                }
+                position: [10, 10]
             },
             title: {
                 left: 'center',
@@ -282,15 +168,108 @@ onMounted(() => {
                 type: 'value',
                 boundaryGap: [0, '100%']
             },
-            dataZoom: [
+            // dataZoom: [
+            //     {
+            //         // type: 'slider',
+            //         start: 0,
+            //         end: 100,
+            //         disabled: true,
+            //         // show: false
+            //     }
+            // ],
+            series: [
                 {
-                    type: 'slider',
-                    start: 0,
-                    end: 100,
-                    disabled: true,
-                    // show: false
+                    name: 'Fake Data',
+                    type: 'line',
+                    symbol: 'none',
+                    sampling: 'lttb',
+                    itemStyle: {
+                        color: 'rgb(255, 70, 131)'
+                    },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: 'rgb(255, 158, 68)'
+                            },
+                            {
+                                offset: 1,
+                                color: 'rgb(255, 70, 131)'
+                            }
+                        ])
+                    },
+                    data: data
+                },
+
+            ]
+        };
+        option && infoImg.setOption(option, { lazyUpdate: true });
+    }, 0);
+    setTimeout(() => {
+        carboncoinImg = echarts.init(CarboncoinImgDom.value, null, {
+            renderer: 'svg'
+        });
+        carboncoinImg.clear()
+        let base = +new Date(1968, 9, 3);
+        let oneDay = 24 * 3600 * 1000;
+        let date = [];
+        let data = [Math.random() * 300];
+        let data1 = [Math.random() * 300]
+        for (let i = 1; i < 2000; i++) {
+            var now = new Date((base += oneDay));
+            date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+            data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+            data1.push(Math.round((Math.random() - 0.5) * 20 + data1[i - 1]));
+        }
+        let option = {
+            animationDuration: 2000,
+            animationEasing: function (k) {
+                return k;
+            },
+            grid: { // 让图表占满容器
+                top: "20px",
+                left: "40px",
+                right: "20px",
+                bottom: "40px"
+            },
+            tooltip: {
+                trigger: 'axis',
+                position: [10, 10]
+                // function (pt) {
+                //     return [pt[0], '100%'];
+                // }
+            },
+            title: {
+                left: 'center',
+                text: 'Large Area Chart'
+            },
+            toolbox: {
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    restore: {},
+                    saveAsImage: {}
                 }
-            ],
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: date
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%']
+            },
+            // dataZoom: [
+            //     {
+            //         type: 'slider',
+            //         start: 0,
+            //         end: 100,
+            //         disabled: true,
+            //         // show: false
+            //     }
+            // ],
             series: [
                 {
                     name: 'Fake Data',
@@ -338,17 +317,44 @@ onMounted(() => {
                 // }
             ]
         };
-        option && carboncoinImg.setOption(option);
+        option && carboncoinImg.setOption(option, { lazyUpdate: true });
 
     }, 0);
+    setTimeout(() => {
+        ob = new ResizeObserver(debounce(() => {
+            infoImg.resize({
+                animation: {
+                    duration: 2000,
+                    animationEasing: function (k) {
+                        return k;
+                    },
+                }
+            })
+            carboncoinImg.resize({
+                animation: {
+                    duration: 2000,
+                    animationEasing: function (k) {
+                        return k;
+                    },
+                }
+            })
+
+        }, 30), {
+
+        })
+        ob.observe(document.body)
+    }, 100);
+
 })
 
-
+onUnmounted(() => {
+    ob.disconnect()
+})
 
 </script>
 
 <template>
-    <div style="height: 100%;width: 100%;display: flex;flex-direction: column;justify-content: space-evenly;"
+    <div style="height: 100%;width: 100%;display: flex;flex-direction: column;justify-content: space-evenly;min-width: 860px;"
         id="wrapper">
         <div style="height: 45%;width: 100%;display: grid;" id="top">
             <!-- 顶部资产展示 -->
@@ -431,7 +437,7 @@ onMounted(() => {
             <!-- 上部个人资产变化图 -->
             <div style="grid-area: bottom;padding: 5px;" class=" border-solid border-slate-300 border">
                 <span style="position: absolute;font-size: 18px;">持有碳币和RMB变化图</span>
-                <div style="width: 100%;height: 100%;" ref="infoImgDom">
+                <div style="width: 100%;height: 100%;overflow: hidden;" ref="infoImgDom">
                     <!-- 这里放echarts的图 -->
 
                 </div>
@@ -539,7 +545,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class=" border-solid border-slate-300 border"
-                style="position: absolute;left: 5px;width: 95%;right: 0;top: 105px;margin: auto;overflow: auto;"
+                style="position: absolute;left: 5px;width: 95%;right: 0;top: 105px;margin: auto;"
                 :style="{ height: `${bottomPriceDom?.getBoundingClientRect().height - 110 + 0}px` }">
                 <div style="width: 100%;height: 100%;" ref="CarboncoinImgDom"></div>
                 <!-- 这里放图 -->

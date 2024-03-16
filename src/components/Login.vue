@@ -124,20 +124,22 @@ async function login() {
     return
   }
   try {
-    const data = await fetch(`${props.url}`, {
+    const res = await fetch(`http://localhost:3000/login`, {
       method: "POST",
       body: { username: username.value, password: password.value },
     });
-    const res = await data.json();
-    if (res.data.code == 200) {
+  
+    const data = await res.json();
+    console.log(data)
+    if (data.data.code == 200) {
       userInfo.value.isLogin = true
-      userInfo.value.token = res.data.token
-      userInfo.value.identity = res.data.identity
+      userInfo.value.token = data.data.token
+      userInfo.value.identity = data.data.identity
       localStorage.setItem("userInfo", JSON.stringify(userInfo.value))
       return
 
     }
-    ElMessage.error(res.data.msg);
+    ElMessage.error(data.data.msg);
     showError.value = true
     setTimeout(() => {
       showError.value = false
