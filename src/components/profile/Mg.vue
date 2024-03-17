@@ -30,11 +30,13 @@ const form = reactive({
 })
 
 onMounted(() => {
-    if (Object.keys(props.data).length > 0) {
-        let a = Object.assign(form, props.data)
-        Object.keys(form).forEach(i => {
+    let keys = Object.keys(props.data)
+    console.log(keys)
+    if (keys.length > 0) {
+        keys.forEach(i => {
             form[i] = props.data[i]
         })
+        console.log(form)
     }
 })
 
@@ -335,7 +337,9 @@ function rowClick(row, column, event) {
 
 onMounted(() => {
     if (props.form.length > 0) {
-        data.value = props.form
+        for(let i=0;i<props.form.length;i++){
+            tableData[i].consumption = props.form[i]
+        }
     }
     // console.log(data.value)
 })
@@ -345,7 +349,7 @@ onMounted(() => {
 watchEffect(() => {
     let E燃烧 = tableData.reduce((pre, cur) => {
         return pre + 1 * cur.eGeneratingCapacity * cur.consumption * cur.oxidationRate * cur.carbonContent * (11 / 3)
-    },0)
+    }, 0)
     let E原材料 = form.S硅铁 * 2.79
     let E过程 = 0.98 * 0.478 * form.D白云石
     let E电和热 = form.AD电量 * props.coefficient + form.AD热量 * 0.11
@@ -367,8 +371,8 @@ onUnmounted(() => {
 
 function changeTableEdit(scope, e = undefined) {
     // console.log(scope)
-    if(props.disabled){
-        retrun 
+    if (props.disabled) {
+        retrun
     }
     scope.row.editing = !scope.row.editing
     if (e) {
@@ -415,17 +419,18 @@ function changeTableEdit(scope, e = undefined) {
         <div style="width: 100%;height: max-content;overflow: visible;position:relative;"
             class=" border-solid border-slate-300 border" ref="">
             <div :style="{ height: `${tableHeight}px` }">
-                <el-table :data="tableData" style="width: 100%" :span-method="objectSpanMethod" lazy
+                <el-table :data="tableData" style="width: 100%;" height="363" :span-method="objectSpanMethod" lazy
                     highlight-current-row :row-click="rowClick">
-                    <el-table-column label="燃料品种" align="center">
-                        <el-table-column prop="state" label="状态" min-width="100" align="center"/>
-                        <el-table-column prop="className" label="种类" min-width="100" align="center"/>
+                    <el-table-column label="燃料品种" align="center" fixed>
+                        <el-table-column prop="state" label="状态" min-width="100" align="center" />
+                        <el-table-column prop="className" label="种类" min-width="100" align="center" />
                     </el-table-column>
-                    <el-table-column prop="unit" label="计量单位" min-width="100" align="center"/>
-                    <el-table-column prop="eGeneratingCapacity" label="低位发电量(GJ/t,GJ/万Nm³)" min-width="150" align="center"/>
-                    <el-table-column prop="carbonContent" label="单位热值含碳量(tC/TJ)" min-width="150"align="center" />
-                    <el-table-column prop="oxidationRate" label="燃料碳氧化率" min-width="120" align="center"/>
-                    <el-table-column prop="consumption" label="净消耗量(t,万Nm³)" min-width="150" align="center">
+                    <el-table-column prop="unit" label="计量单位" min-width="100" align="center" fixed />
+                    <el-table-column prop="eGeneratingCapacity" label="低位发电量(GJ/t,GJ/万Nm³)" min-width="150"
+                        align="center" fixed />
+                    <el-table-column prop="carbonContent" label="单位热值含碳量(tC/TJ)" min-width="150" align="center" fixed />
+                    <el-table-column prop="oxidationRate" label="燃料碳氧化率" min-width="120" align="center" fixed />
+                    <el-table-column prop="consumption" label="净消耗量(t,万Nm³)" min-width="150" align="center" fixed>
                         <template #default="scope">
                             <h1 v-if="!scope.row.editing && scope.row.consumption != ''"
                                 style="width: 100%;height: 100%;" @click="changeTableEdit(scope, $event)">{{
@@ -433,8 +438,9 @@ function changeTableEdit(scope, e = undefined) {
                             <h1 v-else-if="!scope.row.editing && scope.row.consumption == ''"
                                 style="opacity: 0.4;width: 100%;height: 100%;display:block;"
                                 @click="changeTableEdit(scope, $event)">待填</h1>
-                            <el-input v-else v-model="scope.row.consumption" style="height: 23px;display: flex;margin: 0;" placeholder="净消耗量"
-                                step="0.0001" type="number" @blur="changeTableEdit(scope)" size="small"
+                            <el-input v-else v-model="scope.row.consumption"
+                                style="height: 23px;display: flex;margin: 0;" placeholder="净消耗量" step="0.0001"
+                                type="number" @blur="changeTableEdit(scope)" size="small"
                                 @key.enter="changeTableEdit(scope)" :min="0" clearable :disabled="props.disabled"
                                 required />
                         </template>
