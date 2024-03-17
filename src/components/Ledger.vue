@@ -9,6 +9,14 @@ function showLedger() {
 const tableData = [
     {
         date: "2022/02/03",
+        mode: "自动回退",
+        price: "1000 CNY / CBC",
+        number: "100 个",
+        total: "100000 CNY",
+        remark: "碳币出售失败"
+    },
+    {
+        date: "2022/02/03",
         mode: "购买",
         price: "1000 CNY / CBC",
         number: "100 个",
@@ -17,7 +25,15 @@ const tableData = [
     },
     {
         date: "2022/02/03",
-        mode: "出售",
+        mode: "出售中",
+        price: "1000 CNY / CBC",
+        number: "100 个",
+        total: "100000 CNY",
+        remark: "期望碳币出售"
+    },
+    {
+        date: "2022/02/03",
+        mode: "已出售",
         price: "1000 CNY / CBC",
         number: "100 个",
         total: "100000 CNY",
@@ -190,12 +206,16 @@ const tableRowClassNameBystatus = ({
 }) => {
     if (row.mode === "充值") {
         return 'green'
-    } else if (row.mode === '出售') {
+    } else if (row.mode === '已出售') {
         return 'red'
     } else if (row.mode === '购买') {
         return 'yellow'
     } else if (row.mode === '已取消') {
         return 'gray'
+    } else if(row.mode === '自动回退'){
+        return 'white'
+    } else if(row.mode === '出售中'){
+        return 'blue'
     }
 }
 </script>
@@ -207,7 +227,7 @@ const tableRowClassNameBystatus = ({
             align-items: center;justify-content: start;border-radius: 8px;flex-direction: column;background-color: #ffffff;"
                 class=" border-solid border-slate-300 border" ref="tableWrapperDom">
                 <el-table :data="tableData" stripe lazy empty-text="没有记录" :row-class-name="tableRowClassNameBystatus"
-                     style="border-radius: 8px;">
+                    style="border-radius: 8px;">
                     <el-table-column prop="date" label="日期" width="120" sortable />
                     <el-table-column prop="mode" label="方式" width="100" sortable />
                     <el-table-column prop="price" label="价格" width="200" show-overflow-tooltip />
