@@ -5,7 +5,8 @@ import { shallowRef } from 'vue';
 import preViewPDF from '@/components/preViewPDF.vue';
 
 import PDF from "@/assets/PDF.svg"
-import NoFile from '@/assets/网络不稳定.svg'
+// import NoFile from '@/assets/网络不稳定.svg'
+import NoFile from '@/assets/网络不稳定2.png'
 import { ElMessage } from 'element-plus';
 const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
@@ -21,13 +22,11 @@ const COLOR = {
     YELLOW: "rgb(230,162,60)",
     GRAY: "rgb(144,147,153)"
 }
-let controller = {
-    value: undefined
-}
-const signal = {
-    value: undefined
-}
-async function getFile(url, name, type, index = 0) {
+
+//请求中断控制器
+const controller = ref()
+
+async function getFile(url, name, type, index = 0, controller) {
 
     try {
         tableData[index].detail.fileList.push({
@@ -36,13 +35,14 @@ async function getFile(url, name, type, index = 0) {
         let a = name.split('.')
         let contentType = type == 'image' ? ('image/' + a[a.length - 1]) : 'application/pdf'
         // console.log(contentType)
+
         let res = await fetch('http://localhost:3000/file/' + url, {
             method: 'GET',
             headers: {
                 'Content-Type': contentType,
                 'Access-Control-Expose-Headers': '*'
             },
-            signal: signal.value
+            signal: controller.value.signal
         })
 
         // console.log(res.headers)
@@ -82,10 +82,6 @@ async function getFile(url, name, type, index = 0) {
             // We know it's been canceled!
             tableData[index].detail.fileList = []
             console.log('已取消')
-            setTimeout(() => {
-                controller.value = new AbortController();
-                signal.value = controller.value.signal;
-            }, 500);
             return
         }
         ElMessage.error(name + '加载失败')
@@ -95,10 +91,7 @@ async function getFile(url, name, type, index = 0) {
 
 
 onMounted(() => {
-    // 取消fetch请求的AbortController
-    controller.value = new AbortController();
-    const { signal: a } = controller.value;
-    signal.value = a
+
 })
 onUnmounted(() => {
 
@@ -410,10 +403,13 @@ async function showDetail(scope) {
     showDataIndex.value = scope.$index
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
     // console.log(showWhatComponentOfDetail.value)
-    await getFile(1, "1.png", 'image', scope.$index)
-    await getFile(2, "2.png", 'image', scope.$index)
-    await getFile(3, "3.png", 'image', scope.$index)
-    await getFile('pdf', "test.pdf", 'pdf', scope.$index)
+    controller.value = new AbortController()
+    await getFile(1, "1.png", 'image', scope.$index, controller)
+    await getFile(2, "2.png", 'image', scope.$index, controller)
+    await getFile(3, "3.png", 'image', scope.$index, controller)
+    await getFile('pdf', "test.pdf", 'pdf', scope.$index, controller)
+
+
 }
 
 function showForm() {
@@ -483,8 +479,7 @@ function showPDF(url) {
                     </component>
                     <div style="display: flex;width: 100%;justify-content: space-between;padding: 10px;">
                         <el-timeline style="min-width: 500px;transform: translateX(80px);">
-                            <el-timeline-item
-                                v-for="(activity, index) in tableData[showDataIndex].detail.activities.data"
+                            <el-timeline-item v-for="(activity, index) in tableData[showDataIndex].detail.activities.data"
                                 :key="index" :icon="activity.icon" :type="activity.type" :color="activity.color"
                                 :size="activity.size" :hollow="activity.hollow" :timestamp="activity.timestamp"
                                 placement="top">
@@ -492,8 +487,8 @@ function showPDF(url) {
                                     :body-style="{ display: 'flex', flexDirection: 'column', opacity: tableData[showDataIndex].detail.activities.statusIndex == index ? 1 : 0.6, }">
                                     <span style="font-size: 1.3em;">{{ activity.title }}</span>
                                     <span style="font-size: 0.8em;" :style="{ color: activity.color }">{{
-                activity.subTitle
-            }}</span>
+                                        activity.subTitle
+                                    }}</span>
                                 </el-card>
                             </el-timeline-item>
                         </el-timeline>
@@ -530,7 +525,7 @@ function showPDF(url) {
                                         <template v-else>
                                             <span
                                                 style="position: absolute;width: 100%;height: max-content;text-align: center;font-size: 1.3em;font-weight: bold;">{{
-                file.name }}</span>
+                                                    file.name }}</span>
                                             <img class="el-upload-list__item-thumbnail" style="transform: scale(0.3);"
                                                 :src="PDF" alt="" />
                                             <span class="el-upload-list__item-actions">
