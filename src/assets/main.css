@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 .green {
     color: var(--el-color-success);
 }
@@ -15,4 +16,12 @@
 
 .gray {
     color: var(--el-color-info);
+}
+
+.white {
+    color: #909399
+}
+
+.blue {
+    color: var(--el-color-primary-light-3)
 }

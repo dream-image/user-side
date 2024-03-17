@@ -1,16 +1,20 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
-import { TableV2FixedDir } from 'element-plus';
-import { MoreFilled } from '@element-plus/icons-vue'
+import Mg from '@/components/profile/Mg.vue';
 import { shallowRef } from 'vue';
 import preViewPDF from '@/components/preViewPDF.vue';
+
 import PDF from "@/assets/PDF.svg"
+// import NoFile from '@/assets/网络不稳定.svg'
+import NoFile from '@/assets/网络不稳定2.png'
+import { ElMessage } from 'element-plus';
 const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
 
 // 每个导入的资料类型的组件都必须放到这个对象里面，解决被解析后组件变为小写标签
 const componentsObj = {
-    'PowerGrid': PowerGrid
+    'PowerGrid': PowerGrid,
+    'Mg': Mg
 }
 const COLOR = {
     GREEN: "#0bbd87",
@@ -19,18 +23,26 @@ const COLOR = {
     GRAY: "rgb(144,147,153)"
 }
 
-async function getFile(url, name, type) {
+//请求中断控制器
+const controller = ref()
+
+async function getFile(url, name, type, index = 0, controller) {
 
     try {
+        tableData[index].detail.fileList.push({
+            isLoading: true
+        })
         let a = name.split('.')
         let contentType = type == 'image' ? ('image/' + a[a.length - 1]) : 'application/pdf'
-        console.log(contentType)
+        // console.log(contentType)
+
         let res = await fetch('http://localhost:3000/file/' + url, {
             method: 'GET',
             headers: {
                 'Content-Type': contentType,
                 'Access-Control-Expose-Headers': '*'
             },
+            signal: controller.value.signal
         })
 
         // console.log(res.headers)
@@ -38,10 +50,12 @@ async function getFile(url, name, type) {
         // if (type == 'image') {
         let reader = new FileReader()
         reader.onload = () => {
-            tableData[0].detail.fileList.push({
+            tableData[index].detail.fileList.pop()
+            tableData[index].detail.fileList.push({
                 url: reader.result,
                 name: name,
                 type: type,
+                isLoading: false
             })
         }
         reader.readAsDataURL(blob)
@@ -57,15 +71,30 @@ async function getFile(url, name, type) {
 
 
     } catch (error) {
-        console.log(error)
+        tableData[index].detail.fileList.pop()
+        tableData[index].detail.fileList.push({
+            url: NoFile,
+            name: name,
+            type: 'image',
+            isLoading: false
+        })
+        if (error.name === "AbortError") {
+            // We know it's been canceled!
+            tableData[index].detail.fileList = []
+            console.log('已取消')
+            return
+        }
+        ElMessage.error(name + '加载失败')
+        console.log(error.message)
     }
 }
 
-onMounted(async () => {
-    await getFile(1, "1.png", 'image')
-    await getFile(2, "2.png", 'image')
-    await getFile(3, "3.png", 'image')
-    await getFile('pdf', "test.pdf", 'pdf')
+
+onMounted(() => {
+
+})
+onUnmounted(() => {
+
 })
 // 这个里面的数据应该从后端获取，现在只是写死并附上格式
 const tableData = reactive([
@@ -142,7 +171,8 @@ const tableData = reactive([
                 // {  数据类型示例
                 //     url:"",
                 //     name:"",
-                //     type:""
+                //     type:"",
+                //     isLoading:false
                 // }
 
             ]
@@ -159,39 +189,18 @@ const tableData = reactive([
         expendCarbon: "18",
         reallyGetCarbon: "182",
         detail: {
-            mode: 'PowerGrid',
+            mode: 'Mg',
             chooseWhatProvince: "0.222",
             data: { //这里放表格以外的数据
-                EL上网: "1.1234",
-                EL输入: "4.1111",
-                EL输出: "512.3331",
-                EL售电: "42.1345",
-                EL电网: "",
-                tCO2: "",
+                S硅铁: "",
+                D白云石: "",
+                AD热量: "",
+                AD电量: "",
+                // tCO2: ""
             },
             form: [// 放表格数据
-                {
-                    修理设备: 1,
-                    设备容量1: "17",
-                    实际回收量1: "14",
-                    退役设备: 1,
-                    editing: {
-
-                    },
-                    设备容量2: "11",
-                    实际回收量2: "6",
-                },
-                {
-                    修理设备: 2,
-                    设备容量1: "33",
-                    实际回收量1: "32",
-                    退役设备: 2,
-                    editing: {
-
-                    },
-                    设备容量2: "44",
-                    实际回收量2: "43",
-                }
+                1, 2, 3, 4, 5
+                //Mg的这个表格特殊一点，只需要消费数据，其余都是写死且顺序固定的数据
             ],
             activities: {
                 statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
@@ -215,7 +224,15 @@ const tableData = reactive([
                         subTitle: "监管机构未介入"
                     },
                 ]
-            }
+            },
+            fileList: [
+                // {  数据类型示例
+                //     url:"",
+                //     name:"",
+                //     type:""
+                // }
+
+            ]
         }
     },
     {
@@ -374,19 +391,33 @@ const tableRowClassNameBystatus = ({
     }
 }
 
+
+
 //点击查看详细的是下标为哪个的数据
 const showDataIndex = ref(0)
 //点击查看详细处理
-function showDetail(scope) {
+async function showDetail(scope) {
     // console.log(scope)
+
     isShowDetail.value = !isShowDetail.value
     showDataIndex.value = scope.$index
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
     // console.log(showWhatComponentOfDetail.value)
+    controller.value = new AbortController()
+    await getFile(1, "1.png", 'image', scope.$index, controller)
+    await getFile(2, "2.png", 'image', scope.$index, controller)
+    await getFile(3, "3.png", 'image', scope.$index, controller)
+    await getFile('pdf', "test.pdf", 'pdf', scope.$index, controller)
+
+
 }
 
 function showForm() {
+
     isShowDetail.value = !isShowDetail.value
+    controller.value.abort()
+    tableData[showDataIndex.value].detail.fileList = []
+
 }
 
 
@@ -448,8 +479,7 @@ function showPDF(url) {
                     </component>
                     <div style="display: flex;width: 100%;justify-content: space-between;padding: 10px;">
                         <el-timeline style="min-width: 500px;transform: translateX(80px);">
-                            <el-timeline-item
-                                v-for="(activity, index) in tableData[showDataIndex].detail.activities.data"
+                            <el-timeline-item v-for="(activity, index) in tableData[showDataIndex].detail.activities.data"
                                 :key="index" :icon="activity.icon" :type="activity.type" :color="activity.color"
                                 :size="activity.size" :hollow="activity.hollow" :timestamp="activity.timestamp"
                                 placement="top">
@@ -457,8 +487,8 @@ function showPDF(url) {
                                     :body-style="{ display: 'flex', flexDirection: 'column', opacity: tableData[showDataIndex].detail.activities.statusIndex == index ? 1 : 0.6, }">
                                     <span style="font-size: 1.3em;">{{ activity.title }}</span>
                                     <span style="font-size: 0.8em;" :style="{ color: activity.color }">{{
-                activity.subTitle
-            }}</span>
+                                        activity.subTitle
+                                    }}</span>
                                 </el-card>
                             </el-timeline-item>
                         </el-timeline>
@@ -468,11 +498,17 @@ function showPDF(url) {
                                     :file-list="tableData[showDataIndex].detail.fileList" disabled
                                     style="max-width: 320px;">
                                     <template #file="{ file }">
-                                        <template v-if="file.type == 'image'">
+                                        <template v-if="file.isLoading">
+                                            <el-icon class="is-loading" color="#409EFC" :size="30"
+                                                style="position: absolute;left: 0;right: 0;top: 0;bottom: 0;margin: auto;">
+                                                <Loading />
+                                            </el-icon>
+                                        </template>
+                                        <template v-else-if="file.type == 'image'">
                                             <div style="width: 100%;height: 100%;">
                                                 <img class="el-upload-list__item-thumbnail" :src="file.url"
                                                     :alt="file.name" />
-                                                <span class="el-upload-list__item-actions">
+                                                <span class="el-upload-list__item-actions" v-if="file.url != NoFile">
                                                     <span class="el-upload-list__item-preview"
                                                         @click="handlePictureCardPreview(file)">
                                                         <el-icon><zoom-in /></el-icon>
@@ -489,7 +525,7 @@ function showPDF(url) {
                                         <template v-else>
                                             <span
                                                 style="position: absolute;width: 100%;height: max-content;text-align: center;font-size: 1.3em;font-weight: bold;">{{
-                file.name }}</span>
+                                                    file.name }}</span>
                                             <img class="el-upload-list__item-thumbnail" style="transform: scale(0.3);"
                                                 :src="PDF" alt="" />
                                             <span class="el-upload-list__item-actions">

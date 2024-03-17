@@ -109,7 +109,7 @@ const columns = [
         key: "修理设备",
         dataKey: "修理设备",
         title: "修理设备",
-        width: 150,
+        width: 100,
     },
     {
         key: "设备容量1",
@@ -220,7 +220,7 @@ onUnmounted(() => {
 })
 </script>
 <template>
-    <div style="width: 100%;height: 100%;padding: 10px;overflow: auto;display: flex;flex-direction: column;gap: 20px; "
+    <div style="width: 100%;height: 100%;padding: 10px;overflow: auto;display: flex;flex-direction: column;gap: 20px; min-width: 820px;"
         ref="tableWrapperDom">
         <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto"
             class="demo-form-inline" label-position="right" status-icon :rules="rules">
@@ -240,7 +240,7 @@ onUnmounted(() => {
                 <el-input v-model="form.EL售电" style="" type="number" step="0.0001" :min="0" clearable
                     :disabled="props.disabled"></el-input>
             </el-form-item>
-            <el-form-item label="区域电网年平均供电排放因子(吨二氧化碳/兆瓦时):" required>
+            <el-form-item label="区域电力消费排放因子(吨二氧化碳/兆瓦时):" required>
                 <el-input :value="props.coefficient" style="" disabled type="number" step="0.0001"></el-input>
             </el-form-item>
             <el-form-item label="碳排放总和" prop="tCO2">
@@ -261,7 +261,7 @@ onUnmounted(() => {
             <div :style="{ height: `${tableHeight}px` }">
                 <el-auto-resizer>
                     <template #default="{ height, width }">
-                        <el-table-v2 :columns="columns" :data="data" :width="width" :height="height" fixed
+                        <el-table-v2 :columns="columns" :data="data"  :width="width" :height="height" fixed
                             :row-height="40" :footer-height="30">
                             <template #footer>
                                 <div class="gray" style="display:flex;align-items: center;

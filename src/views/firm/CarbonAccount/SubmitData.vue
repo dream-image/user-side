@@ -1,5 +1,6 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
+import Mg from '@/components/profile/Mg.vue';
 import preViewPDF from '@/components/preViewPDF.vue';
 import { ElMessageBox, ElMessage } from 'element-plus'
 import auditingPicture from '@/assets/审核中.svg'
@@ -17,6 +18,10 @@ const itemList = [
     {
         value: "电网",
         label: "电网"
+    },
+    {
+        value:"镁冶炼",
+        label:"镁冶炼"
     }
 ]
 const chooseWhatItem = ref("")
@@ -273,7 +278,7 @@ function showPDF(url) {
     <el-empty v-if="userInfo.auditing" :image="auditingPicture" description="您已经有报告在审核中，请等待审核结果" />
     <el-empty v-else-if="userInfo.hasPass" :image="hasPassPicture" description="您今年的报告已通过，不用再重复提交" />
 
-    <div style="height: 100%;width: 100%;position: relative;" v-else>
+    <div style="height: 100%;width: 100%;position: relative;min-width: 835px;" v-else>
         <div style="position: absolute;display: flex;flex-direction: column;gap: 8px;width: 98%;">
             <span style="font-size: 20px;">提交资料</span>
             <span style="font-size: 10px;">一年核算一次
@@ -297,9 +302,10 @@ function showPDF(url) {
 
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
-            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disable="false"
+            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disabled="false"
                 v-if="chooseWhatItem === '电网'">
             </PowerGrid>
+            <Mg v-else-if="chooseWhatItem === '镁冶炼'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disabled="false"></Mg>
         </div>
 
         <!-- 上传图片/pdf的抽屉 -->
