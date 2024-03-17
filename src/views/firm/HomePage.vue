@@ -436,7 +436,7 @@ onUnmounted(() => {
             </div>
             <!-- 上部个人资产变化图 -->
             <div style="grid-area: bottom;padding: 5px;" class=" border-solid border-slate-300 border">
-                <span style="position: absolute;font-size: 18px;">持有碳币和RMB变化图</span>
+                <span style="position: absolute;font-size: 18px;">我的碳币</span>
                 <div style="width: 100%;height: 100%;overflow: hidden;" ref="infoImgDom">
                     <!-- 这里放echarts的图 -->
 
@@ -521,7 +521,7 @@ onUnmounted(() => {
         </div>
         <div style="height: 50%;width: 100%;position: relative;" class=" border-solid border-slate-300 border"
             ref="bottomPriceDom">
-            <span style="position: absolute;left: 5px;top: 5px;font-size: 20px;">价格</span>
+            <span style="position: absolute;left: 5px;top: 5px;font-size: 20px;">市场</span>
             <span style="position: absolute;top: 40px;left: 5px;font-size: 18px;"><img :src="COIN" alt="币"
                     style="height: 27px;width: 27px;display: inline-block;margin-right: 5px;">碳币 Carboncoin</span>
             <div style="position: absolute;top: 70px;left:5px;font-size: 20px;display: flex;">

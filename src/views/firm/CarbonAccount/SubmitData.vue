@@ -302,10 +302,10 @@ function showPDF(url) {
 
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
-            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disable="false"
+            <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disabled="false"
                 v-if="chooseWhatItem === '电网'">
             </PowerGrid>
-            <Mg v-else-if="chooseWhatItem === '镁冶炼'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disable="false"></Mg>
+            <Mg v-else-if="chooseWhatItem === '镁冶炼'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disabled="false"></Mg>
         </div>
 
         <!-- 上传图片/pdf的抽屉 -->

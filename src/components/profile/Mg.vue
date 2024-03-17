@@ -90,8 +90,8 @@ const tableData = reactive([
         eGeneratingCapacity: "20.304",
         carbonContent: "27.49",
         oxidationRate: "0.94",
-        consumption: "",
-        editing:false
+        consumption: "12",
+        editing: false
     },
     {
         state: "固体燃料",
@@ -100,7 +100,8 @@ const tableData = reactive([
         eGeneratingCapacity: "19.570",
         carbonContent: "27.49",
         oxidationRate: "1",
-        consumption: "0.93",
+        consumption: "",
+        editing: false
     },
     {
         state: "固体燃料",
@@ -110,6 +111,8 @@ const tableData = reactive([
         carbonContent: "28.00",
         oxidationRate: "0.96",
         consumption: "",
+        editing: false
+
     },
     {
         state: "固体燃料",
@@ -119,6 +122,7 @@ const tableData = reactive([
         carbonContent: "25.40",
         oxidationRate: "0.90",
         consumption: "",
+        editing: false
     },
     {
         state: "固体燃料",
@@ -128,6 +132,7 @@ const tableData = reactive([
         carbonContent: "25.40",
         oxidationRate: "0.90",
         consumption: "",
+        editing: false
     },
     {
         state: "固体燃料",
@@ -137,6 +142,7 @@ const tableData = reactive([
         carbonContent: "33.60",
         oxidationRate: "0.90",
         consumption: "",
+        editing: false
     },
     {
         state: "固体燃料",
@@ -146,6 +152,7 @@ const tableData = reactive([
         carbonContent: "29.42",
         oxidationRate: "0.93",
         consumption: "",
+        editing: false
     },
     {
         state: "固体燃料",
@@ -155,6 +162,7 @@ const tableData = reactive([
         carbonContent: "29.50",
         oxidationRate: "0.93",
         consumption: "",
+        editing: false
     },
 
     {
@@ -165,6 +173,7 @@ const tableData = reactive([
         carbonContent: "20.10",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -174,6 +183,7 @@ const tableData = reactive([
         carbonContent: "21.10",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -183,6 +193,7 @@ const tableData = reactive([
         carbonContent: "18.90",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -192,6 +203,7 @@ const tableData = reactive([
         carbonContent: "20.20",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -201,6 +213,7 @@ const tableData = reactive([
         carbonContent: "19.60",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -210,6 +223,7 @@ const tableData = reactive([
         carbonContent: "17.20",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -219,6 +233,7 @@ const tableData = reactive([
         carbonContent: "17.20",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "液体燃料",
@@ -228,6 +243,7 @@ const tableData = reactive([
         carbonContent: "22.00",
         oxidationRate: "0.98",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -237,6 +253,7 @@ const tableData = reactive([
         carbonContent: "12.10",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -246,6 +263,7 @@ const tableData = reactive([
         carbonContent: "70.80",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -255,6 +273,7 @@ const tableData = reactive([
         carbonContent: "49.60",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -264,6 +283,7 @@ const tableData = reactive([
         carbonContent: "12.20",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -273,6 +293,7 @@ const tableData = reactive([
         carbonContent: "12.20",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -282,6 +303,7 @@ const tableData = reactive([
         carbonContent: "15.30",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -291,6 +313,7 @@ const tableData = reactive([
         carbonContent: "11.96",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
     {
         state: "气体燃料",
@@ -300,12 +323,13 @@ const tableData = reactive([
         carbonContent: "18.20",
         oxidationRate: "0.99",
         consumption: "",
+        editing: false
     },
 ])
 
 
-function rowClick(row,column,event){
-    console.log(row,column)
+function rowClick(row, column, event) {
+    console.log(row, column)
 }
 
 
@@ -319,11 +343,13 @@ onMounted(() => {
 
 
 watchEffect(() => {
-    // let E网损 = (form.S硅铁 * 1 + form.D白云石 * 1 - form.AD热量 * 1 - form.AD电量 * 1) * props.coefficient
-    // let ESF6 = data.value.reduce((total, cur, index) => {
-    //     return total + (cur.设备容量1 - cur.实际回收量1) * 1 + (cur.设备容量2 - cur.实际回收量2) * 1
-    // }, 0)
-    // form.tCO2 = ((E网损 + ESF6) * 1).toFixed(4) * 1
+    let E燃烧 = tableData.reduce((pre, cur) => {
+        return pre + 1 * cur.eGeneratingCapacity * cur.consumption * cur.oxidationRate * cur.carbonContent * (11 / 3)
+    },0)
+    let E原材料 = form.S硅铁 * 2.79
+    let E过程 = 0.98 * 0.478 * form.D白云石
+    let E电和热 = form.AD电量 * props.coefficient + form.AD热量 * 0.11
+    form.tCO2 = (E燃烧 + E原材料 + E过程 + E电和热).toFixed(4) * 1
 })
 
 
@@ -338,6 +364,22 @@ onMounted(() => {
 onUnmounted(() => {
     ob.disconnect()
 })
+
+function changeTableEdit(scope, e = undefined) {
+    // console.log(scope)
+    if(props.disabled){
+        retrun 
+    }
+    scope.row.editing = !scope.row.editing
+    if (e) {
+        let parent = e.target.parentNode
+        nextTick(() => {
+            console.log(parent.children[0].children[0].children[0].focus())
+        })
+
+
+    }
+}
 </script>
 <template>
     <div style="width: 100%;height: 100%;padding: 10px;overflow: auto;display: flex;flex-direction: column;gap: 20px; "
@@ -375,18 +417,26 @@ onUnmounted(() => {
             <div :style="{ height: `${tableHeight}px` }">
                 <el-table :data="tableData" style="width: 100%" :span-method="objectSpanMethod" lazy
                     highlight-current-row :row-click="rowClick">
-                    <el-table-column label="燃料品种">
-                        <el-table-column prop="state" label="状态" min-width="100" />
-                        <el-table-column prop="className" label="种类"  />
+                    <el-table-column label="燃料品种" align="center">
+                        <el-table-column prop="state" label="状态" min-width="100" align="center"/>
+                        <el-table-column prop="className" label="种类" min-width="100" align="center"/>
                     </el-table-column>
-                    <el-table-column prop="unit" label="计量单位" min-width="100" />
-                    <el-table-column prop="eGeneratingCapacity" label="低位发电量(GJ/t,GJ/万Nm³)" min-width="150" />
-                    <el-table-column prop="carbonContent" label="单位热值含碳量(tC/TJ)" min-width="150" />
-                    <el-table-column prop="oxidationRate" label="燃料碳氧化率" min-width="120" />
-                    <el-table-column prop="consumption" label="净消耗量(GJ/t,GJ/万Nm³)" min-width="150">
+                    <el-table-column prop="unit" label="计量单位" min-width="100" align="center"/>
+                    <el-table-column prop="eGeneratingCapacity" label="低位发电量(GJ/t,GJ/万Nm³)" min-width="150" align="center"/>
+                    <el-table-column prop="carbonContent" label="单位热值含碳量(tC/TJ)" min-width="150"align="center" />
+                    <el-table-column prop="oxidationRate" label="燃料碳氧化率" min-width="120" align="center"/>
+                    <el-table-column prop="consumption" label="净消耗量(t,万Nm³)" min-width="150" align="center">
                         <template #default="scope">
-                            <el-input v-model="scope.row.consumption" placeholder="净消耗量" step="0.0001" type="number"
-                                :min="0" clearable :disabled="props.disabled" required />
+                            <h1 v-if="!scope.row.editing && scope.row.consumption != ''"
+                                style="width: 100%;height: 100%;" @click="changeTableEdit(scope, $event)">{{
+            scope.row.consumption }}</h1>
+                            <h1 v-else-if="!scope.row.editing && scope.row.consumption == ''"
+                                style="opacity: 0.4;width: 100%;height: 100%;display:block;"
+                                @click="changeTableEdit(scope, $event)">待填</h1>
+                            <el-input v-else v-model="scope.row.consumption" style="height: 23px;display: flex;margin: 0;" placeholder="净消耗量"
+                                step="0.0001" type="number" @blur="changeTableEdit(scope)" size="small"
+                                @key.enter="changeTableEdit(scope)" :min="0" clearable :disabled="props.disabled"
+                                required />
                         </template>
                     </el-table-column>
                 </el-table>
