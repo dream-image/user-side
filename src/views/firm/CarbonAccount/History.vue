@@ -89,7 +89,7 @@ async function getFile(url, name, type, index = 0) {
             return
         }
         ElMessage.error(name + '加载失败')
-        console.log(error)
+        console.log(error.message)
     }
 }
 
