@@ -21,7 +21,12 @@ const COLOR = {
     YELLOW: "rgb(230,162,60)",
     GRAY: "rgb(144,147,153)"
 }
-
+let controller = {
+    value: undefined
+}
+const signal = {
+    value: undefined
+}
 async function getFile(url, name, type, index = 0) {
 
     try {
@@ -30,13 +35,14 @@ async function getFile(url, name, type, index = 0) {
         })
         let a = name.split('.')
         let contentType = type == 'image' ? ('image/' + a[a.length - 1]) : 'application/pdf'
-        console.log(contentType)
+        // console.log(contentType)
         let res = await fetch('http://localhost:3000/file/' + url, {
             method: 'GET',
             headers: {
                 'Content-Type': contentType,
                 'Access-Control-Expose-Headers': '*'
             },
+            signal: signal.value
         })
 
         // console.log(res.headers)
@@ -72,22 +78,29 @@ async function getFile(url, name, type, index = 0) {
             type: 'image',
             isLoading: false
         })
+        if (error.name === "AbortError") {
+            // We know it's been canceled!
+            tableData[index].detail.fileList = []
+            console.log('已取消')
+            setTimeout(() => {
+                controller.value = new AbortController();
+                signal.value = controller.value.signal;
+            }, 500);
+            return
+        }
         ElMessage.error(name + '加载失败')
         console.log(error)
     }
 }
 
 
-onMounted(async () => {
-    try {
-
-        await getFile(1, "1.png", 'image', 1)
-        await getFile(2, "2.png", 'image', 1)
-        await getFile(3, "3.png", 'image', 1)
-        await getFile('pdf', "test.pdf", 'pdf', 1)
-    } catch (error) {
-        console.log(error)
-    }
+onMounted(() => {
+    // 取消fetch请求的AbortController
+    controller.value = new AbortController();
+    const { signal: a } = controller.value;
+    signal.value = a
+})
+onUnmounted(() => {
 
 })
 // 这个里面的数据应该从后端获取，现在只是写死并附上格式
@@ -165,7 +178,8 @@ const tableData = reactive([
                 // {  数据类型示例
                 //     url:"",
                 //     name:"",
-                //     type:""
+                //     type:"",
+                //     isLoading:false
                 // }
 
             ]
@@ -384,19 +398,30 @@ const tableRowClassNameBystatus = ({
     }
 }
 
+
+
 //点击查看详细的是下标为哪个的数据
 const showDataIndex = ref(0)
 //点击查看详细处理
-function showDetail(scope) {
+async function showDetail(scope) {
     // console.log(scope)
+
     isShowDetail.value = !isShowDetail.value
     showDataIndex.value = scope.$index
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
     // console.log(showWhatComponentOfDetail.value)
+    await getFile(1, "1.png", 'image', scope.$index)
+    await getFile(2, "2.png", 'image', scope.$index)
+    await getFile(3, "3.png", 'image', scope.$index)
+    await getFile('pdf', "test.pdf", 'pdf', scope.$index)
 }
 
 function showForm() {
+
     isShowDetail.value = !isShowDetail.value
+    controller.value.abort()
+    tableData[showDataIndex.value].detail.fileList = []
+
 }
 
 

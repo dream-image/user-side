@@ -31,12 +31,10 @@ const form = reactive({
 
 onMounted(() => {
     let keys = Object.keys(props.data)
-    console.log(keys)
     if (keys.length > 0) {
         keys.forEach(i => {
             form[i] = props.data[i]
         })
-        console.log(form)
     }
 })
 

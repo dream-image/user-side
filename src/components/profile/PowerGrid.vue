@@ -109,7 +109,7 @@ const columns = [
         key: "修理设备",
         dataKey: "修理设备",
         title: "修理设备",
-        width: 150,
+        width: 100,
     },
     {
         key: "设备容量1",
@@ -261,7 +261,7 @@ onUnmounted(() => {
             <div :style="{ height: `${tableHeight}px` }">
                 <el-auto-resizer>
                     <template #default="{ height, width }">
-                        <el-table-v2 :columns="columns" :data="data" :width="width" :height="height" fixed
+                        <el-table-v2 :columns="columns" :data="data"  :width="width" :height="height" fixed
                             :row-height="40" :footer-height="30">
                             <template #footer>
                                 <div class="gray" style="display:flex;align-items: center;
