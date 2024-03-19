@@ -6,6 +6,8 @@ import { ref } from 'vue'
 import { useTransition } from '@vueuse/core'
 import { ChatLineRound, Male } from '@element-plus/icons-vue'
 import Ledger from '@/components/Ledger.vue'
+const baseURL = inject("baseURL")
+
 //加入了防抖的保留两位小数
 function precisionRef(value, delay = 500, digit = 2) {
     let timeout
@@ -57,29 +59,52 @@ function showLedger() {
 const priceChosen = ref()//选中的价格
 const loading = ref(false) //加载状态
 const options = ref([
-    {
-        value: "0", label: "100 ￥/ CBC"
-    },
-    {
-        value: "1", label: "101 ￥/ CBC"
-    },
-    {
-        value: "2", label: "113.430 ￥/ CBC"
-    },
-    {
-        value: "3", label: "123.11 ￥/ CBC"
-    },
+    // {
+    //     value: "100 ", label: "100 ￥/ CBC"
+    // },
+    // {
+    //     value: "101", label: "101 ￥/ CBC"
+    // },
+    // {
+    //     value: "113.430", label: "113.430 ￥/ CBC"
+    // },
+    // {
+    //     value: "123.11", label: "123.11 ￥/ CBC"
+    // },
 ])
 //购买时候搜索框触发的查找价格
 function searchPrice() {
-    console.log('查询市场价格')
+
+    getCarbonPriceList()
 }
 
 
 const buyNumber = precisionRef(null, 0)//购买数量
 
+
+const buying=ref(false)//是否正在购买
 // 购买碳币
-function buyCarbonCoin() {
+async function buyCarbonCoin() {
+    try {
+        buying.value=true
+        let res = await fetch(`${baseURL}/firm/buy`, {
+            method: "POST",
+            body: {
+                number: buyNumber.value,
+                price: priceChosen.value
+            }
+        })
+        let data = await res.json()
+        if (data.code === 200) {
+            ElMessage.success('购买成功')
+            // 下面是购买成功的逻辑
+
+        }
+    } catch (error) {
+        console.error(error)
+        ElMessage.error('请求失败，请检查网络')
+    }
+    buying.value=false
     console.log('购买碳币')
 }
 
@@ -87,10 +112,54 @@ function buyCarbonCoin() {
 const sellNumber = precisionRef(null, 0)//出售数量
 
 const sellPrice = precisionRef(null, 0)
-//出售价格
-function sellCarbonCoin() {
+
+const selling=ref(false)//是否正在出售
+//出售碳币
+async function sellCarbonCoin() {
+    try {
+        let res = await fetch(`${baseURL}/firm/sell`, {
+            method: "POST",
+            body: {
+                number: buyNumber.value,
+                price: priceChosen.value
+            }
+        })
+        let data = await res.json()
+        if (data.code === 200) {
+            ElMessage.success('托管成功')
+            // 下面是购买成功的逻辑
+
+        }
+    } catch (error) {
+        console.error(error)
+        ElMessage.error('请求失败，请检查网络')
+    }
+
     console.log('出售碳币')
 }
+
+//购买碳币的时候获取的市场价
+async function getCarbonPriceList() {
+    try {
+        loading.value = true
+        let res = await fetch(`${baseURL}/firm/carbonPrice`)
+        let data = await res.json()
+        options.value = data
+    } catch (error) {
+        console.log(error)
+        ElMessage.error('请求失败，请检查网络')
+    }
+    loading.value = false
+}
+
+// 加载完毕获取数据处理
+onMounted(() => {
+    // getCarbonPriceList()
+})
+
+
+
+
 
 
 // 要展示的价格曲线图是24小时，还是1周还是一个月还是一年
@@ -106,6 +175,7 @@ const priceTableDate = ref('24小时')
 
 import * as echarts from 'echarts';
 import debounce from '@/utils/debounce';
+import { ElMessage } from 'element-plus';
 const CarboncoinImgDom = ref(null)
 const infoImgDom = ref(null)
 let ob
@@ -377,8 +447,7 @@ onUnmounted(() => {
                         <div
                             style="display: flex;width: 100%;height: 52%;align-items: center;justify-content: center;gap: 5px;">
                             <ItemBox :src="COIN" alt="币" style="height: 45px;width: 45px;"></ItemBox>
-                            <div
-                                style="width: 50%;height: 100%; min-width: 120px;display: flex;flex-direction: column;">
+                            <div style="width: 50%;height: 100%; min-width: 120px;display: flex;flex-direction: column;">
                                 <div style="height: 60%;display: flex;align-items: center;">
                                     <span>123,412.00 CBC</span>
                                     <!-- 此处需要填写数据 -->
@@ -391,8 +460,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div
-                            style="display: flex;width: 100%;height: 44%;align-content: center;justify-content: center;">
+                        <div style="display: flex;width: 100%;height: 44%;align-content: center;justify-content: center;">
                             <el-button type="primary" size="large" style="width: 60%;" @click="showLedger">
 
                                 <template #icon>
@@ -410,8 +478,7 @@ onUnmounted(() => {
                         <div
                             style="display: flex;width: 100%;height: 52%;align-items: center;justify-content: center;gap: 5px;">
                             <ItemBox :src="RMB" alt="人民币" style="height: 45px;width: 45px;"></ItemBox>
-                            <div
-                                style="width: 50%;height: 100%; min-width: max-content;display: flex;align-items: center;">
+                            <div style="width: 50%;height: 100%; min-width: max-content;display: flex;align-items: center;">
                                 <div style="height: 60%;display: flex;align-items: center;min-width: max-content;">
                                     <span>￥ 123,412.00</span>
                                     <!-- 此处需要填写数据 -->
@@ -419,8 +486,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div
-                            style="display: flex;width: 100%;height: 44%;align-content: center;justify-content: center;">
+                        <div style="display: flex;width: 100%;height: 44%;align-content: center;justify-content: center;">
                             <el-button type="primary" size="large" style="width: 60%;" @click="topUp">
 
                                 <template #icon>
@@ -461,9 +527,9 @@ onUnmounted(() => {
                                 class="border-solid border-slate-300 border">
                                 <span style="position: absolute;top: 2px;left: 5px;font-size: 13px;">价格</span>
                                 <div style="transform: translateY(5px);width: 80%;">
-                                    <el-select v-model="priceChosen" multiple filterable remote reserve-keyword
-                                        placeholder="查询市场价" remote-show-suffix :remote-method="searchPrice"
-                                        :loading="loading" style="width: 100%;" size="small" class="removeBorder">
+                                    <el-select v-model="priceChosen" filterable remote placeholder="查询市场价"
+                                        remote-show-suffix :remote-method="searchPrice" :loading="loading"
+                                        loading-text="加载中" style="width: 100%;" size="small" class="removeBorder">
                                         <el-option v-for="item in options" :key="item.value" :label="item.label"
                                             :value="item.value" />
                                     </el-select>
@@ -479,7 +545,7 @@ onUnmounted(() => {
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <el-button type="primary" size="large" style="width: 80%;"
-                                    @click="buyCarbonCoin">购买</el-button>
+                                    @click="buyCarbonCoin" :disabled="buying">购买</el-button>
                             </div>
                         </div>
                     </el-tab-pane>
@@ -512,7 +578,7 @@ onUnmounted(() => {
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <el-button type="primary" size="large" style="width: 80%;"
-                                    @click="buyCarbonCoin">出售</el-button>
+                                    @click="sellCarbonCoin" :disabled="selling">托管出售</el-button>
                             </div>
                         </div>
                     </el-tab-pane>
