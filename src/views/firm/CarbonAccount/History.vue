@@ -8,6 +8,7 @@ import PDF from "@/assets/PDF.svg"
 // import NoFile from '@/assets/网络不稳定.svg'
 import NoFile from '@/assets/网络不稳定2.png'
 import { ElMessage } from 'element-plus';
+const baseURL = inject("baseURL")
 const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
 
@@ -89,293 +90,24 @@ async function getFile(url, name, type, index = 0, controller) {
     }
 }
 
+async function getData() {
+    try {
+        let res = await fetch(`${baseURL}/firm/history`)
+        let data = await res.json()
+        tableData.push(...data.historyList)
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 
 onMounted(() => {
-
+    getData()
 })
 onUnmounted(() => {
 
 })
 // 这个里面的数据应该从后端获取，现在只是写死并附上格式
-const tableData = reactive([
-    {
-        id: "f1ad2fb4-0325-4287-89f5-ff8bd6f5a704",
-        name: "无所谓之有限公司",
-        submitDate: "2012/01/14",
-        auditDate: "2012/03/04",
-        auditResult: "不通过",
-        status: "不通过",
-        carbonCredits: "200",
-        expendCarbon: "18",
-        reallyGetCarbon: "182",
-        detail: { //这detail里面应该附上 mode(就是是哪个类型的,这里的PowerGrid是电网，然后依据类型附上相应字段以及值,注意：这里的类型名字一定要和对应组件名一样)
-            mode: 'PowerGrid',
-            chooseWhatProvince: "0.123",//填表的时候选的那个省份对应的系数
-            data: { //这里放表格以外的数据
-                EL上网: "1.1234",
-                EL输入: "4.1111",
-                EL输出: "512.3331",
-                EL售电: "42.1345",
-                EL电网: "",
-                tCO2: "",
-            },
-            form: [// 放表格数据
-                {
-                    修理设备: 1,
-                    设备容量1: "17",
-                    实际回收量1: "14",
-                    退役设备: 1,
-                    editing: { //这个字段 就一直为空对象
-
-                    },
-                    设备容量2: "11",
-                    实际回收量2: "6",
-                },
-                {
-                    修理设备: 2,
-                    设备容量1: "33",
-                    实际回收量1: "32",
-                    退役设备: 2,
-                    editing: {
-
-                    },
-                    设备容量2: "44",
-                    实际回收量2: "43",
-                }
-            ],
-            activities: {
-                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
-                // 提交申请后是0  审核人处理后是1  审核机构介入后是2
-                data: [
-                    {
-                        timestamp: '2018-04-12 20:46',
-                        color: COLOR.GREEN,
-                        title: "提交申请",
-                        subTitle: "已通过"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.RED,
-                        title: "未通过",
-                        subTitle: "理由：材料不充分"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.GRAY,  //未轮到的都用灰色
-                        title: "未介入",//不知道这里叫什么好,
-                        subTitle: "监管机构未介入"
-                    },
-                ]
-            },
-            fileList: [
-                // {  数据类型示例
-                //     url:"",
-                //     name:"",
-                //     type:"",
-                //     isLoading:false
-                // }
-
-            ]
-        }
-    },
-    {
-        id: "345c9c13-00c8-4a3d-a7a8-af36b88c09f8",
-        name: "xxxxaaaaasdasdasasda有限公司",
-        submitDate: "2011/01/14",
-        auditDate: "2011/01/16",
-        auditResult: "通过",
-        status: "通过",
-        carbonCredits: "200",
-        expendCarbon: "18",
-        reallyGetCarbon: "182",
-        detail: {
-            mode: 'Mg',
-            chooseWhatProvince: "0.222",
-            data: { //这里放表格以外的数据
-                S硅铁: "",
-                D白云石: "",
-                AD热量: "",
-                AD电量: "",
-                // tCO2: ""
-            },
-            form: [// 放表格数据
-                1, 2, 3, 4, 5
-                //Mg的这个表格特殊一点，只需要消费数据，其余都是写死且顺序固定的数据
-            ],
-            activities: {
-                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
-                data: [
-                    {
-                        timestamp: '2018-04-12 20:46',
-                        color: COLOR.GREEN,
-                        title: "提交申请",
-                        subTitle: "已通过"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.RED,
-                        title: "未通过",
-                        subTitle: "理由：材料不充分"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.GRAY,
-                        title: "未介入",//不知道这里叫什么好,
-                        subTitle: "监管机构未介入"
-                    },
-                ]
-            },
-            fileList: [
-                // {  数据类型示例
-                //     url:"",
-                //     name:"",
-                //     type:""
-                // }
-
-            ]
-        }
-    },
-    {
-        id: "d1880346-3cb7-4bed-82b5-f55692fd4ad6",
-        name: "阿啦啦啦之有限公司",
-        submitDate: "2012/01/14",
-        auditDate: "2012/03/04",
-        auditResult: "待审核",
-        status: "待审核",
-        carbonCredits: "200",
-        expendCarbon: "18",
-        reallyGetCarbon: "182",
-        detail: {
-            mode: 'PowerGrid',
-            chooseWhatProvince: "0.222",
-            data: { //这里放表格以外的数据
-                EL上网: "1.1234",
-                EL输入: "4.1111",
-                EL输出: "512.3331",
-                EL售电: "42.1345",
-                EL电网: "",
-                tCO2: "",
-            },
-            form: [// 放表格数据
-                {
-                    修理设备: 1,
-                    设备容量1: "17",
-                    实际回收量1: "14",
-                    退役设备: 1,
-                    editing: {
-
-                    },
-                    设备容量2: "11",
-                    实际回收量2: "6",
-                },
-                {
-                    修理设备: 2,
-                    设备容量1: "33",
-                    实际回收量1: "32",
-                    退役设备: 2,
-                    editing: {
-
-                    },
-                    设备容量2: "44",
-                    实际回收量2: "43",
-                }
-            ],
-            activities: {
-                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
-                data: [
-                    {
-                        timestamp: '2018-04-12 20:46',
-                        color: COLOR.GREEN,
-                        title: "提交申请",
-                        subTitle: "已通过"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.RED,
-                        title: "未通过",
-                        subTitle: "理由：材料不充分"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.GRAY,
-                        title: "未介入",//不知道这里叫什么好,
-                        subTitle: "监管机构未介入"
-                    },
-                ]
-            }
-        }
-    },
-    {
-        id: "97c35d19-9893-4292-8dbc-ac27fcc1fb41",
-        name: "滴滴滴滴之有限公司",
-        submitDate: "2012/01/14",
-        auditDate: "2012/03/04",
-        auditResult: "已取消",
-        status: "已取消",
-        carbonCredits: "200",
-        expendCarbon: "18",
-        reallyGetCarbon: "182",
-        detail: {
-            mode: 'PowerGrid',
-            chooseWhatProvince: "0.222",
-            data: { //这里放表格以外的数据
-                EL上网: "1.1234",
-                EL输入: "4.1111",
-                EL输出: "512.3331",
-                EL售电: "42.1345",
-                EL电网: "",
-                tCO2: "",
-            },
-            form: [// 放表格数据
-                {
-                    修理设备: 1,
-                    设备容量1: "17",
-                    实际回收量1: "14",
-                    退役设备: 1,
-                    editing: {
-
-                    },
-                    设备容量2: "11",
-                    实际回收量2: "6",
-                },
-                {
-                    修理设备: 2,
-                    设备容量1: "33",
-                    实际回收量1: "32",
-                    退役设备: 2,
-                    editing: {
-
-                    },
-                    设备容量2: "44",
-                    实际回收量2: "43",
-                }
-            ],
-            activities: {
-                statusIndex: "1",//表示目前到了那个阶段，然后这个阶段之外的所有card我都会给他搞一个灰
-                data: [
-                    {
-                        timestamp: '2018-04-12 20:46',
-                        color: COLOR.GREEN,
-                        title: "提交申请",
-                        subTitle: "已通过"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.RED,
-                        title: "未通过",
-                        subTitle: "理由：材料不充分"
-                    },
-                    {
-                        timestamp: '2018-04-03 20:46',
-                        color: COLOR.GRAY,
-                        title: "未介入",//不知道这里叫什么好,
-                        subTitle: "监管机构未介入"
-                    },
-                ]
-            }
-        }
-    },
-])
+const tableData = reactive([])
 const tableRowClassNameBystatus = ({
     row,
     rowIndex

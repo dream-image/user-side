@@ -6,200 +6,215 @@ function showLedger() {
     console.log("显示账本");
     isShowLedger.value = !isShowLedger.value
 }
-const tableData = [
-    {
-        date: "2022/02/03",
-        mode: "自动回退",
-        price: "1000 CNY / CBC",
-        number: "100 个",
-        total: "100000 CNY",
-        remark: "碳币出售失败"
-    },
-    {
-        date: "2022/02/03",
-        mode: "购买",
-        price: "1000 CNY / CBC",
-        number: "100 个",
-        total: "100000 CNY",
-        remark: "购买碳币"
-    },
-    {
-        date: "2022/02/03",
-        mode: "出售中",
-        price: "1000 CNY / CBC",
-        number: "100 个",
-        total: "100000 CNY",
-        remark: "期望碳币出售"
-    },
-    {
-        date: "2022/02/03",
-        mode: "已出售",
-        price: "1000 CNY / CBC",
-        number: "100 个",
-        total: "100000 CNY",
-        remark: "出售碳币"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-    {
-        date: "2022/02/03",
-        mode: "充值",
-        price: "2000 CNY",
-        number: "2000 元",
-        total: "2000 CNY",
-        remark: "充值"
-    },
-]
+const baseURL = inject("baseURL")
+const tableData = reactive(
+    [
+        // {
+        //     date: "2022/02/03",
+        //     mode: "自动回退",
+        //     price: "1000 CNY / CBC",
+        //     number: "100 个",
+        //     total: "100000 CNY",
+        //     remark: "碳币出售失败"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "购买",
+        //     price: "1000 CNY / CBC",
+        //     number: "100 个",
+        //     total: "100000 CNY",
+        //     remark: "购买碳币"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "出售中",
+        //     price: "1000 CNY / CBC",
+        //     number: "100 个",
+        //     total: "100000 CNY",
+        //     remark: "期望碳币出售"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "已出售",
+        //     price: "1000 CNY / CBC",
+        //     number: "100 个",
+        //     total: "100000 CNY",
+        //     remark: "出售碳币"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+        // {
+        //     date: "2022/02/03",
+        //     mode: "充值",
+        //     price: "2000 CNY",
+        //     number: "2000 元",
+        //     total: "2000 CNY",
+        //     remark: "充值"
+        // },
+    ]
+)
+async function getData() {
+    try {
+        let res = await fetch(`${baseURL}/firm/ledger`)
+        let data = await res.json()
+        tableData.push(...data)
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+onMounted(() => {
+    getData()
+})
 const tableRowClassNameBystatus = ({
     row,
     rowIndex
@@ -257,7 +272,6 @@ const tableRowClassNameBystatus = ({
             </div>
         </div>
     </teleport>
-
 </template>
 
 <style lang=''>
