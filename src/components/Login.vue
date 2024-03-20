@@ -108,7 +108,7 @@ async function login() {
       token: 'token',
       identity: props.developerMode.identity,
       detail: props.developerMode.identity === 'firm' ? {
-        id: "",
+        id: "1452kljasd01jd",
         name: "",
         profession: "",
         legalRepresentative: "",

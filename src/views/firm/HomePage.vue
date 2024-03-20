@@ -7,6 +7,14 @@ import { useTransition } from '@vueuse/core'
 import { ChatLineRound, Male } from '@element-plus/icons-vue'
 import Ledger from '@/components/Ledger.vue'
 const baseURL = inject("baseURL")
+import { useUserInfoStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+const { userInfo } = storeToRefs(useUserInfoStore())
+
+//千分位展示
+function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,')
+}
 
 //加入了防抖的保留两位小数
 function precisionRef(value, delay = 500, digit = 2) {
@@ -38,13 +46,12 @@ const source = ref(0)
 const outputValue = useTransition(source, {
     duration: 1500,
 })
-source.value = 332521970.01
+
 
 const averagePriceOfCBC = ref(0)
 const showAveragePrice = useTransition(averagePriceOfCBC, {
     duration: 1500,
 })
-averagePriceOfCBC.value = 923122.30
 // 充值按钮事件
 function topUp() {
 
@@ -82,11 +89,11 @@ function searchPrice() {
 const buyNumber = precisionRef(null, 0)//购买数量
 
 
-const buying=ref(false)//是否正在购买
+const buying = ref(false)//是否正在购买
 // 购买碳币
 async function buyCarbonCoin() {
     try {
-        buying.value=true
+        buying.value = true
         let res = await fetch(`${baseURL}/firm/buy`, {
             method: "POST",
             body: {
@@ -104,7 +111,7 @@ async function buyCarbonCoin() {
         console.error(error)
         ElMessage.error('请求失败，请检查网络')
     }
-    buying.value=false
+    buying.value = false
     console.log('购买碳币')
 }
 
@@ -113,7 +120,7 @@ const sellNumber = precisionRef(null, 0)//出售数量
 
 const sellPrice = precisionRef(null, 0)
 
-const selling=ref(false)//是否正在出售
+const selling = ref(false)//是否正在出售
 //出售碳币
 async function sellCarbonCoin() {
     try {
@@ -152,9 +159,48 @@ async function getCarbonPriceList() {
     loading.value = false
 }
 
+const CBCNumber = ref(0) //CBC数量
+const RMBNumber = ref(0)//人民币数量
+async function getAllMoney() {
+    try {
+        let res = await fetch(`${baseURL}/firm/money?id=` + userInfo.value.detail.id, {
+            method: "GET",
+        })
+        let data = await res.json()
+        if (data.code != 200) {
+            ElMessage.error('请求失败，请检查网络')
+            return
+        }
+        let { RMB, CBC, averageCBCPrice } = data.data
+        source.value = RMB + CBC * averageCBCPrice//总资产
+        CBCNumber.value = CBC
+        RMBNumber.value = RMB
+        averagePriceOfCBC.value = averageCBCPrice
+    } catch (error) {
+        console.error(error)
+        ElMessage.error('请求失败，请检查网络')
+    }
+}
+
+async function getMyAndMarketCarbonInfo() {
+    try {
+        let res = await fetch(`${baseURL}/firm/carbonInfo?id=` + userInfo.value.detail.id)
+        let data = await res.json()
+        if (data.code != 200) {
+            ElMessage.error('请求失败，请检查网络')
+            return
+        }
+        let { user: userCarbonCoinNumberList, carbonCoin: carbonCoinNumberList } = data.data
+        // 用户碳币变化数据以及四种选项的碳币单价变化数据
+    } catch (error) {
+        console.error(error)
+        ElMessage.error('请求失败，请检查网络')
+    }
+}
 // 加载完毕获取数据处理
 onMounted(() => {
-    // getCarbonPriceList()
+    getAllMoney()
+    getMyAndMarketCarbonInfo()
 })
 
 
@@ -448,13 +494,14 @@ onUnmounted(() => {
                             style="display: flex;width: 100%;height: 52%;align-items: center;justify-content: center;gap: 5px;">
                             <ItemBox :src="COIN" alt="币" style="height: 45px;width: 45px;"></ItemBox>
                             <div style="width: 50%;height: 100%; min-width: 120px;display: flex;flex-direction: column;">
-                                <div style="height: 60%;display: flex;align-items: center;">
-                                    <span>123,412.00 CBC</span>
+                                <div style="height: 60%;display: flex;align-items: center;justify-content: center;">
+                                    <span style="">{{ formatNumber(CBCNumber) }} CBC</span>
                                     <!-- 此处需要填写数据 -->
                                 </div>
                                 <div
                                     style="height: 40%;font-size: 10px;display: flex;align-items: center;justify-content: center;">
-                                    <span style="transform: translateY(-3px);">12,012.00 CNY / CBC</span>
+                                    <span style="transform: translateY(-3px);">{{ formatNumber(averagePriceOfCBC) }} CNY /
+                                        CBC</span>
                                     <!-- 此处需要填写数据   碳币此刻的平均价格 -->
                                 </div>
                             </div>
@@ -480,7 +527,7 @@ onUnmounted(() => {
                             <ItemBox :src="RMB" alt="人民币" style="height: 45px;width: 45px;"></ItemBox>
                             <div style="width: 50%;height: 100%; min-width: max-content;display: flex;align-items: center;">
                                 <div style="height: 60%;display: flex;align-items: center;min-width: max-content;">
-                                    <span>￥ 123,412.00</span>
+                                    <span>￥ {{ formatNumber(RMBNumber) }}</span>
                                     <!-- 此处需要填写数据 -->
                                 </div>
                             </div>
@@ -544,8 +591,8 @@ onUnmounted(() => {
                             </div>
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
-                                <el-button type="primary" size="large" style="width: 80%;"
-                                    @click="buyCarbonCoin" :disabled="buying">购买</el-button>
+                                <el-button type="primary" size="large" style="width: 80%;" @click="buyCarbonCoin"
+                                    :disabled="buying">购买</el-button>
                             </div>
                         </div>
                     </el-tab-pane>
@@ -577,8 +624,8 @@ onUnmounted(() => {
                             </div>
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
-                                <el-button type="primary" size="large" style="width: 80%;"
-                                    @click="sellCarbonCoin" :disabled="selling">托管出售</el-button>
+                                <el-button type="primary" size="large" style="width: 80%;" @click="sellCarbonCoin"
+                                    :disabled="selling">托管出售</el-button>
                             </div>
                         </div>
                     </el-tab-pane>
