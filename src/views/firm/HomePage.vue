@@ -99,6 +99,9 @@ async function buyCarbonCoin() {
             body: {
                 number: buyNumber.value,
                 price: priceChosen.value
+            },
+            headers: {
+                "Content-Type": "application/json",
             }
         })
         let data = await res.json()
@@ -129,6 +132,9 @@ async function sellCarbonCoin() {
             body: {
                 number: buyNumber.value,
                 price: priceChosen.value
+            },
+            headers: {
+                "Content-Type": "application/json",
             }
         })
         let data = await res.json()
@@ -149,7 +155,11 @@ async function sellCarbonCoin() {
 async function getCarbonPriceList() {
     try {
         loading.value = true
-        let res = await fetch(`${baseURL}/firm/carbonPrice`)
+        let res = await fetch(`${baseURL}/firm/carbonPrice`, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
         let data = await res.json()
         options.value = data
     } catch (error) {
@@ -165,6 +175,9 @@ async function getAllMoney() {
     try {
         let res = await fetch(`${baseURL}/firm/money?id=` + userInfo.value.detail.id, {
             method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
         })
         let data = await res.json()
         if (data.code != 200) {
@@ -184,7 +197,11 @@ async function getAllMoney() {
 
 async function getMyAndMarketCarbonInfo() {
     try {
-        let res = await fetch(`${baseURL}/firm/carbonInfo?id=` + userInfo.value.detail.id)
+        let res = await fetch(`${baseURL}/firm/carbonInfo?id=` + userInfo.value.detail.id, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
         let data = await res.json()
         if (data.code != 200) {
             ElMessage.error('请求失败，请检查网络')

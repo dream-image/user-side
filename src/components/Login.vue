@@ -126,12 +126,16 @@ async function login() {
   try {
     const res = await fetch(`http://localhost:3000/login`, {
       method: "POST",
-      body: { username: username.value, password: password.value },
+      body:JSON.stringify( { username: username.value, password: password.value }),
+      headers:{
+        "Content-Type": "application/json",
+      }
     });
   
     const data = await res.json();
     console.log(data)
-    if (data.data.code == 200) {
+
+    if (data.code == 200) {
       userInfo.value.isLogin = true
       userInfo.value.token = data.data.token
       userInfo.value.identity = data.data.identity
@@ -139,7 +143,7 @@ async function login() {
       return
 
     }
-    ElMessage.error(data.data.msg);
+    ElMessage.error(data.message);
     showError.value = true
     setTimeout(() => {
       showError.value = false

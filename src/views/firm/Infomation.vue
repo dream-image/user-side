@@ -10,9 +10,11 @@ const routerGo = (target) => {
     router.replace({ path: target })
 }
 
+const baseURL = inject("baseURL")
 
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
+import { ElMessage } from 'element-plus';
 const { userInfo } = storeToRefs(useUserInfoStore())
 const info = computed(() => userInfo.value.detail)
 const form = ref({
@@ -26,14 +28,32 @@ const form = ref({
 //     corporateNature: "",
 //     reportingResponsiblePerson: "",
 //     code: "",
+
 const isShowForm = ref(false)
 function showForm() {
     isShowForm.value = !isShowForm.value
 }
 
 // 修改企业信息
-function onSubmit() {
-    console.log(form.value)
+async function onSubmit() {
+    console.log({ ...form.value })
+    try {
+        let res = await fetch(`${baseURL}/firm/updateInfomation`, {
+            method: "POST",
+            body: JSON.stringify({ form: { ...form.value } }),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        let data = await res.json()
+        if (data.code !== 200) {
+            ElMessage.error(data.message)
+            return
+        }
+        ElMessage.success("修改成功")
+    } catch (error) {
+        ElMessage.error("请求失败,请检查网络")
+    }
     // 发送请求
     // 修改成功
     //同步更新给userInfo

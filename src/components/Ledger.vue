@@ -205,7 +205,11 @@ const tableData = reactive(
 )
 async function getData() {
     try {
-        let res = await fetch(`${baseURL}/firm/ledger`)
+        let res = await fetch(`${baseURL}/firm/ledger`, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
         let data = await res.json()
         tableData.push(...data)
     } catch (error) {
