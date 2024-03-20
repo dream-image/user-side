@@ -92,7 +92,7 @@ async function getFile(url, name, type, index = 0, controller) {
 
 async function getData() {
     try {
-        let res = await fetch(`${baseURL}/firm/history`)
+        let res = await fetch(`${baseURL}/firm/history?id=企业1`)
         let data = await res.json()
         tableData.push(...data.historyList)
     } catch (error) {
