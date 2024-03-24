@@ -133,7 +133,7 @@ async function login() {
     });
   
     const data = await res.json();
-    console.log(data)
+    // console.log(data)
 
     if (data.code == 200) {
       userInfo.value.isLogin = true

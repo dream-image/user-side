@@ -98,7 +98,12 @@ async function getData() {
             }
         })
         let data = await res.json()
-        tableData.push(...data.historyList)
+        console.log(data);
+        if (data.code <= 400) {
+            tableData.push(...data.historyList)
+            return
+        }
+        ElMessage.error(data.message)
     } catch (error) {
         console.log(error.message)
     }

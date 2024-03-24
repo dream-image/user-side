@@ -19,6 +19,10 @@ const props = defineProps({
         type: Array,
         required: false,
         default: []
+    },
+    getFormData: {
+        type: Function,
+        required: true
     }
 })
 const form = reactive({
@@ -204,6 +208,7 @@ watchEffect(() => {
         return total + (cur.设备容量1 - cur.实际回收量1) * 1 + (cur.设备容量2 - cur.实际回收量2) * 1
     }, 0)
     form.tCO2 = ((E网损 + ESF6) * 1).toFixed(4) * 1
+    props.getFormData(form, data.value)
 })
 
 
@@ -222,8 +227,8 @@ onUnmounted(() => {
 <template>
     <div style="width: 100%;height: 100%;padding: 10px;overflow: auto;display: flex;flex-direction: column;gap: 20px; min-width: 820px;"
         ref="tableWrapperDom">
-        <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto"
-            class="demo-form-inline" label-position="right" status-icon :rules="rules">
+        <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto" class="demo-form-inline"
+            label-position="right" status-icon :rules="rules">
             <el-form-item label="电厂上网电量(兆瓦时):" required prop="EL上网">
                 <el-input v-model="form.EL上网" style="" type="number" step="0.0001" :min="0" clearable
                     :disabled="props.disabled"></el-input>
@@ -261,8 +266,8 @@ onUnmounted(() => {
             <div :style="{ height: `${tableHeight}px` }">
                 <el-auto-resizer>
                     <template #default="{ height, width }">
-                        <el-table-v2 :columns="columns" :data="data"  :width="width" :height="height" fixed
-                            :row-height="40" :footer-height="30">
+                        <el-table-v2 :columns="columns" :data="data" :width="width" :height="height" fixed :row-height="40"
+                            :footer-height="30">
                             <template #footer>
                                 <div class="gray" style="display:flex;align-items: center;
                                     justify-content: center; height: 100%;width: 100%;">

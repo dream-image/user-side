@@ -19,6 +19,10 @@ const props = defineProps({
         type: Array,
         required: false,
         default: []
+    },
+    getFormData: {
+        type: Function,
+        required: true
     }
 })
 const form = reactive({
@@ -335,7 +339,7 @@ function rowClick(row, column, event) {
 
 onMounted(() => {
     if (props.form.length > 0) {
-        for(let i=0;i<props.form.length;i++){
+        for (let i = 0; i < props.form.length; i++) {
             tableData[i].consumption = props.form[i]
         }
     }
@@ -352,6 +356,7 @@ watchEffect(() => {
     let E过程 = 0.98 * 0.478 * form.D白云石
     let E电和热 = form.AD电量 * props.coefficient + form.AD热量 * 0.11
     form.tCO2 = (E燃烧 + E原材料 + E过程 + E电和热).toFixed(4) * 1
+    props.getFormData(form,tableData)
 })
 
 
@@ -386,8 +391,8 @@ function changeTableEdit(scope, e = undefined) {
 <template>
     <div style="width: 100%;height: 100%;padding: 10px;overflow: auto;display: flex;flex-direction: column;gap: 20px; "
         ref="tableWrapperDom">
-        <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto"
-            class="demo-form-inline" label-position="right" status-icon :rules="rules">
+        <el-form :model="form" :inline="true" label-width="200px" style="width: auto;height:auto" class="demo-form-inline"
+            label-position="right" status-icon :rules="rules">
             <el-form-item label="年度内自产的硅铁产量(吨):" required prop="S硅铁">
                 <el-input v-model="form.S硅铁" style="" type="number" step="0.0001" :min="0" clearable
                     :disabled="props.disabled"></el-input>
@@ -424,21 +429,20 @@ function changeTableEdit(scope, e = undefined) {
                         <el-table-column prop="className" label="种类" min-width="100" align="center" />
                     </el-table-column>
                     <el-table-column prop="unit" label="计量单位" min-width="100" align="center" fixed />
-                    <el-table-column prop="eGeneratingCapacity" label="低位发电量(GJ/t,GJ/万Nm³)" min-width="150"
-                        align="center" fixed />
+                    <el-table-column prop="eGeneratingCapacity" label="低位发电量(GJ/t,GJ/万Nm³)" min-width="150" align="center"
+                        fixed />
                     <el-table-column prop="carbonContent" label="单位热值含碳量(tC/TJ)" min-width="150" align="center" fixed />
                     <el-table-column prop="oxidationRate" label="燃料碳氧化率" min-width="120" align="center" fixed />
                     <el-table-column prop="consumption" label="净消耗量(t,万Nm³)" min-width="150" align="center" fixed>
                         <template #default="scope">
-                            <h1 v-if="!scope.row.editing && scope.row.consumption != ''"
-                                style="width: 100%;height: 100%;" @click="changeTableEdit(scope, $event)">{{
-            scope.row.consumption }}</h1>
+                            <h1 v-if="!scope.row.editing && scope.row.consumption != ''" style="width: 100%;height: 100%;"
+                                @click="changeTableEdit(scope, $event)">{{
+                                    scope.row.consumption }}</h1>
                             <h1 v-else-if="!scope.row.editing && scope.row.consumption == ''"
                                 style="opacity: 0.4;width: 100%;height: 100%;display:block;"
                                 @click="changeTableEdit(scope, $event)">待填</h1>
-                            <el-input v-else v-model="scope.row.consumption"
-                                style="height: 23px;display: flex;margin: 0;" placeholder="净消耗量" step="0.0001"
-                                type="number" @blur="changeTableEdit(scope)" size="small"
+                            <el-input v-else v-model="scope.row.consumption" style="height: 23px;display: flex;margin: 0;"
+                                placeholder="净消耗量" step="0.0001" type="number" @blur="changeTableEdit(scope)" size="small"
                                 @key.enter="changeTableEdit(scope)" :min="0" clearable :disabled="props.disabled"
                                 required />
                         </template>

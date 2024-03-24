@@ -17,13 +17,14 @@ import { storeToRefs } from "pinia";
 import { ElMessage } from 'element-plus';
 import { onMounted, watchEffect } from 'vue';
 const { userInfo } = storeToRefs(useUserInfoStore())
+const { updateUserInfo } = useUserInfoStore()
 const info = computed(() => userInfo.value.detail)
 const form = ref({
     ...toRaw(userInfo.value.detail)
 })
 
 watchEffect(() => {
-  form.value = toRaw(userInfo.value.detail);
+    form.value = toRaw(userInfo.value.detail);
 });
 // id: "",
 //     name: "",
@@ -40,24 +41,28 @@ function showForm() {
 }
 
 // 获取企业信息
-async function getinfo(){
-    try{
-        let res = await fetch(`${baseURL}/firm/information?username=xy2&password=654321`,{          //暂时写死 待改传值
+async function getinfo() {
+    try {
+        let res = await fetch(`${baseURL}/firm/information?username=xy2&password=654321`, {          //暂时写死 待改传值
             headers: {
                 'Content-Type': 'application/json',
             }
         })
         let data = await res.json()
-        let {name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id} = data
-        userInfo.value.detail.name=name
-        userInfo.value.detail.profession=profession
-        userInfo.value.detail.legalRepresentative=legal_representative
-        userInfo.value.detail.contactInfo=contact_info
-        userInfo.value.detail.corporateNature=corporate_nature
-        userInfo.value.detail.reportingResponsiblePerson=reporting_responsible_person
-        userInfo.value.detail.code=code
-        userInfo.value.detail.id=id
-    }catch(error){
+        let { name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id } = data
+        updateUserInfo({
+            detail: {
+                name, profession,
+                legalRepresentative: legal_representative,
+                contactInfo: contact_info,
+                corporateNature: corporate_nature,
+                reportingResponsiblePerson: reporting_responsible_person,
+                code,
+                id,
+            }
+
+        })
+    } catch (error) {
         console.log(error.message)
     }
 }
@@ -68,7 +73,7 @@ onMounted(() => {
 onUnmounted(() => {
 
 })
-   
+
 
 // 修改企业信息
 async function onSubmit() {
@@ -120,16 +125,24 @@ async function onSubmit() {
             <div
                 style="display: flex;position: absolute;top: 2cqb;left: 0;right: 0;margin: auto; height: 70%;width: 90%;flex-direction: column;justify-content: space-evenly;min-height: 300px;">
                 <div style="display: flex;justify-content: space-evenly;">
-                    <InfoBox title="企业名称" :content="info.name" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
-                    <InfoBox title="所属行业" :content="info.profession" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
-                    <InfoBox title="法定代表人" :content="info.legalRepresentative" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
-                    <InfoBox title="联系人信息" :content="info.contactInfo" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
+                    <InfoBox title="企业名称" :content="info.name" :contentStyle='{ fontSize: "20px", textAlign: "center" }'>
+                    </InfoBox>
+                    <InfoBox title="所属行业" :content="info.profession"
+                        :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
+                    <InfoBox title="法定代表人" :content="info.legalRepresentative"
+                        :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
+                    <InfoBox title="联系人信息" :content="info.contactInfo"
+                        :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
                 </div>
                 <div style="display: flex;justify-content: space-evenly;">
-                    <InfoBox title="单位性质" :content="info.corporateNature" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
-                    <InfoBox title="组织机构代码" :content="info.code" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
-                    <InfoBox title="填报负责人" :content="info.reportingResponsiblePerson" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
-                    <InfoBox title="企业ID" :content="info.id" :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
+                    <InfoBox title="单位性质" :content="info.corporateNature"
+                        :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
+                    <InfoBox title="组织机构代码" :content="info.code" :contentStyle='{ fontSize: "20px", textAlign: "center" }'>
+                    </InfoBox>
+                    <InfoBox title="填报负责人" :content="info.reportingResponsiblePerson"
+                        :contentStyle='{ fontSize: "20px", textAlign: "center" }'></InfoBox>
+                    <InfoBox title="企业ID" :content="info.id" :contentStyle='{ fontSize: "20px", textAlign: "center" }'>
+                    </InfoBox>
                 </div>
             </div>
         </div>

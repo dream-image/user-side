@@ -2,16 +2,18 @@
 import PowerGrid from '@/components/profile/PowerGrid.vue';
 import Mg from '@/components/profile/Mg.vue';
 import preViewPDF from '@/components/preViewPDF.vue';
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessageBox, ElMessage, dayjs } from 'element-plus'
 import auditingPicture from '@/assets/审核中.svg'
 import hasPassPicture from '@/assets/没有找到相关结果.svg'
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import { Delete, Download, Plus, ZoomIn, Close } from '@element-plus/icons-vue'
 import PDF from '@/assets/PDF.svg'
-
+const baseURL = inject("baseURL")
 const { userInfo } = storeToRefs(useUserInfoStore())
-
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
 
 
 const itemList = [
@@ -20,8 +22,8 @@ const itemList = [
         label: "电网"
     },
     {
-        value:"镁冶炼",
-        label:"镁冶炼"
+        value: "镁冶炼",
+        label: "镁冶炼"
     }
 ]
 const chooseWhatItem = ref("")
@@ -203,6 +205,13 @@ function saveFile() {
     hasUploadMaterial.value = true
 }
 
+const allData = ref({})
+
+function getFormData(form, tableData) {
+    allData.value.form = form
+    allData.value.tableData = tableData
+}
+
 // 点击提交后出现确认框
 function submit() {
     ElMessageBox.confirm(
@@ -215,13 +224,51 @@ function submit() {
         }
     )
         .then(() => {
-            ElMessage({
-                type: 'success',
-                message: '已提交',
-            })
 
             // 提交资料的逻辑
-            uploadRef.value?.submit()
+            // uploadRef.value?.submit()
+            (
+                async () => {
+                    try {
+                        let res = await fetch(`${baseURL}/firm/submitData`, {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                name: userInfo.value.detail.name,
+                                firmId: userInfo.value.detail.id,
+                                submitDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                                detail: {
+                                    data: allData.value.form,
+                                    form: allData.value.tableData,
+                                }
+                            }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        let data = await res.json()
+                        if (data.code < 400) {
+                            ElMessage({
+                                type: 'success',
+                                message: '已提交',
+                            })
+                            userInfo.value.auditing = true
+                            userInfo.value.hasPass = false
+                            setTimeout(() => {
+                                router.push({
+                                    name: 'firm-history'
+                                })
+                            }, 300);
+
+                        }
+
+                    } catch (error) {
+                        ElMessage({
+                            type: 'error',
+                            message: error.message,
+                        })
+                    }
+                }
+            )()
 
         })
         .catch(() => {
@@ -285,8 +332,8 @@ function showPDF(url) {
                 <el-link type="info" style="font-size: 8px;" href="/碳排放因子参考文献.pdf"
                     download="参考文献.pdf">区域电网年平均供电排放因子参考文献</el-link>
             </span>
-            <el-select v-model="chooseWhatItem" placeholder="选择报告类型"
-                style="width: 240px;position: absolute;left: 100px;" clearable>
+            <el-select v-model="chooseWhatItem" placeholder="选择报告类型" style="width: 240px;position: absolute;left: 100px;"
+                clearable>
                 <el-option v-for="item in itemList" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
             <el-select v-model="chooseWhatProvince" placeholder="选择所在省份" filterable no-match-text="没有匹配的省份"
@@ -303,9 +350,10 @@ function showPDF(url) {
         <!-- 下面展示每种类型的表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
             <PowerGrid :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disabled="false"
-                v-if="chooseWhatItem === '电网'">
+                :getFormData="getFormData" v-if="chooseWhatItem === '电网'">
             </PowerGrid>
-            <Mg v-else-if="chooseWhatItem === '镁冶炼'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince" :disabled="false"></Mg>
+            <Mg v-else-if="chooseWhatItem === '镁冶炼'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince"
+                :disabled="false" :getFormData="getFormData"></Mg>
         </div>
 
         <!-- 上传图片/pdf的抽屉 -->
@@ -315,9 +363,9 @@ function showPDF(url) {
             </template>
             <template #default>
                 <div style="width: 100%;height: 100%;">
-                    <el-upload v-model:file-list="fileList" class="upload-demo" drag :auto-upload="false"
-                        ref="uploadRef" :before-upload="(e) => beforeAvatarUpload(e)" :on-preview="handlePreview"
-                        :on-remove="handleRemove" list-type="picture">
+                    <el-upload v-model:file-list="fileList" class="upload-demo" drag :auto-upload="false" ref="uploadRef"
+                        :before-upload="(e) => beforeAvatarUpload(e)" :on-preview="handlePreview" :on-remove="handleRemove"
+                        list-type="picture">
                         <template #file="{ file }">
                             <template v-if="file.raw.type.indexOf('image') != -1">
                                 <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7"
@@ -331,8 +379,8 @@ function showPDF(url) {
                                 </el-icon>
                             </template>
                             <template v-else>
-                                <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7"
-                                    :src="PDF" :min-scale="0.2" :initial-index="4" fit="cover" @click="showPDF(file.url)" />
+                                <el-image style="width: 100px; height: 100px;" :zoom-rate="1.2" :max-scale="7" :src="PDF"
+                                    :min-scale="0.2" :initial-index="4" fit="cover" @click="showPDF(file.url)" />
                                 <span style="margin-left: 25px;">{{ file.name }}</span>
                                 <el-icon
                                     style="position: absolute;right: 2px;top: 2px;width: 20px;height: 20px;opacity: 0.8;cursor: pointer;"
@@ -361,8 +409,6 @@ function showPDF(url) {
             <preViewPDF :url="pdfUrl"></preViewPDF>
         </el-dialog>
     </div>
-
-
 </template>
 <style scoped>
 .demo-image__error .image-slot {
