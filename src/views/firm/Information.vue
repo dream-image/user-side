@@ -15,12 +15,16 @@ const baseURL = inject("baseURL")
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import { ElMessage } from 'element-plus';
-import { onMounted } from 'vue';
+import { onMounted, watchEffect } from 'vue';
 const { userInfo } = storeToRefs(useUserInfoStore())
 const info = computed(() => userInfo.value.detail)
 const form = ref({
     ...toRaw(userInfo.value.detail)
 })
+
+watchEffect(() => {
+  form.value = toRaw(userInfo.value.detail);
+});
 // id: "",
 //     name: "",
 //     profession: "",
@@ -70,7 +74,7 @@ onUnmounted(() => {
 async function onSubmit() {
     console.log({ ...form.value })
     try {
-        let res = await fetch(`${baseURL}/firm/updateInfomation`, {
+        let res = await fetch(`${baseURL}/firm/updateInformation`, {
             method: "POST",
             body: JSON.stringify({ form: { ...form.value } }),
             headers: {
@@ -82,6 +86,7 @@ async function onSubmit() {
             ElMessage.error(data.message)
             return
         }
+        console.log('success')
         ElMessage.success("修改成功")
     } catch (error) {
         ElMessage.error("请求失败,请检查网络")

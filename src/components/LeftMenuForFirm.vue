@@ -69,7 +69,7 @@ export default {
                 <el-menu-item index="firm-history">历史记录</el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>
-        <el-menu-item index="infomation"  > 
+        <el-menu-item index="information"  > 
             <el-icon>
                 <document />
             </el-icon>

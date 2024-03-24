@@ -20,9 +20,9 @@ const router = createRouter({
       component: () => import('@/views/firm/CarbonAccount/History.vue')
     },
     {
-      path: '/infomation',
-      name: 'infomation',
-      component: () => import('@/views/firm/Infomation.vue')
+      path: '/information',
+      name: 'information',
+      component: () => import('@/views/firm/Information.vue')
     },
     {
       path: '/audit',
