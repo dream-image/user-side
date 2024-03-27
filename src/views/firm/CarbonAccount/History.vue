@@ -180,6 +180,13 @@ function showPDF(url) {
     pdfVisible.value = !pdfVisible.value
     pdfUrl.value = url
 }
+
+const allData = ref({})
+
+function getFormData(form, tableData) {
+    allData.value.form = form
+    allData.value.tableData = tableData
+}
 </script>
 
 <template>
@@ -216,7 +223,7 @@ function showPDF(url) {
                 background-color: white;padding: 10px 10px;border-radius: 8px;z-index: 99;">
                     <component :is="showWhatComponentOfDetail" :disabled="true" style="height: 600px;width: 1000px;"
                         :coefficient="tableData[showDataIndex].detail.chooseWhatProvince"
-                        :data="tableData[showDataIndex].detail.data" :form="tableData[showDataIndex].detail.form">
+                        :data="tableData[showDataIndex].detail.data" :form="tableData[showDataIndex].detail.form" :getFormData="getFormData">
                     </component>
                     <div style="display: flex;width: 100%;justify-content: space-between;padding: 10px;">
                         <el-timeline style="min-width: 500px;transform: translateX(80px);">
