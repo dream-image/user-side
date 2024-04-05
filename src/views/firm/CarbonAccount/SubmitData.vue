@@ -1,6 +1,7 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
 import Mg from '@/components/profile/Mg.vue';
+import Ceramic from '@/components/profile/Ceramic.vue'
 import preViewPDF from '@/components/preViewPDF.vue';
 import { ElMessageBox, ElMessage, dayjs } from 'element-plus'
 import auditingPicture from '@/assets/审核中.svg'
@@ -9,12 +10,18 @@ import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import { Delete, Download, Plus, ZoomIn, Close } from '@element-plus/icons-vue'
 import PDF from '@/assets/PDF.svg'
+import { v4 as uuid } from 'uuid';
+import { nanoid } from 'nanoid'
 const baseURL = inject("baseURL")
 const { userInfo } = storeToRefs(useUserInfoStore())
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
-
+const type = {
+    '电网': 'PowerGrid',
+    '镁冶炼': 'Mg',
+    '陶瓷': 'Ceramic'
+}
 
 const itemList = [
     {
@@ -24,6 +31,10 @@ const itemList = [
     {
         value: "镁冶炼",
         label: "镁冶炼"
+    },
+    {
+        value: "陶瓷",
+        label: '陶瓷（暂无）'
     }
 ]
 const chooseWhatItem = ref("")
@@ -229,22 +240,41 @@ function submit() {
             // uploadRef.value?.submit()
             (
                 async () => {
+
                     try {
+                        const fd = new FormData()
+
+                        fd.append('name', userInfo.value.detail.name)
+                        fd.append('firmId', userInfo.value.detail.id)
+                        fd.append('submitDate', dayjs().format('YYYY-MM-DD HH:mm:ss'))
+                        fd.append('detail', JSON.stringify({
+                            data: allData.value.form ?? [],
+                            form: allData.value.tableData ?? [],
+                            mode: type[chooseWhatItem.value],
+                            chooseWhatProvince: chooseWhatProvince.value
+                        }))
+                        fd.append('nanoid', nanoid())
+
+                        // 注意，文件一定要最后加，不然后端multer会拿不到数据
+                        fileList.value.forEach(item => {
+                            fd.append('file', item.raw)
+                        })
                         let res = await fetch(`${baseURL}/firm/submitData`, {
                             method: 'POST',
-                            body: JSON.stringify({
-                                name: userInfo.value.detail.name,
-                                firmId: userInfo.value.detail.id,
-                                submitDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-                                detail: {
-                                    data: allData.value.form,
-                                    form: allData.value.tableData,
-                                }
-                            }),
+                            body: fd,
                             headers: {
-                                'Content-Type': 'application/json'
+                                // 'Content-Type': 'multipart/form-data'
                             }
                         })
+                        // let data = await res.json()
+
+                        // let res = await fetch(`${baseURL}/firm/file`, {
+                        //     method: 'POST',
+                        //     body: fd,
+                        //     headers: {
+                        //         'Content-Type': 'multipart/form-data'
+                        //     }
+                        // })
                         let data = await res.json()
                         if (data.code < 400) {
                             ElMessage({
@@ -262,6 +292,7 @@ function submit() {
                         }
 
                     } catch (error) {
+                        console.log(error);
                         ElMessage({
                             type: 'error',
                             message: error.message,
@@ -354,6 +385,8 @@ function showPDF(url) {
             </PowerGrid>
             <Mg v-else-if="chooseWhatItem === '镁冶炼'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince"
                 :disabled="false" :getFormData="getFormData"></Mg>
+            <Ceramic v-else-if="chooseWhatItem === '陶瓷'" :coefficient="chooseWhatProvince == '' ? 1 : chooseWhatProvince"
+                :disabled="false" :getFormData="getFormData"></Ceramic>
         </div>
 
         <!-- 上传图片/pdf的抽屉 -->
