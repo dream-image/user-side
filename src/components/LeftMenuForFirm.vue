@@ -26,55 +26,58 @@ export default {
                         'Content-Type': 'application/json',
                     }
                 })
-                let { name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id } = await res.json()
+                let { name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id, auditing, hasPass } = await res.json()
 
                 updateUserInfo({
-                    detail:{
-                    name, profession,
-                    legalRepresentative: legal_representative,
-                    contactInfo: contact_info,
-                    corporateNature: corporate_nature,
-                    reportingResponsiblePerson: reporting_responsible_person,
-                    code,
-                    id,
-                }
-                   
+                    detail: {
+                        name, profession,
+                        legalRepresentative: legal_representative,
+                        contactInfo: contact_info,
+                        corporateNature: corporate_nature,
+                        reportingResponsiblePerson: reporting_responsible_person,
+                        code,
+                        id,
+
+                    },
+                    auditing,
+                    hasPass
+
                 })
-        } catch (error) {
-            console.log(error.message)
+            } catch (error) {
+                console.log(error.message)
+            }
         }
-    }
 
         const routerGo = (target) => {
-        router.replace({ path: target })
-    }
+            router.replace({ path: target })
+        }
         const active = ref()
         watch(route, (value) => {
-    active.value = value.path
-})
-return {
-    isCollapse,
-    routerGo,
-    router,
-    active,
-    getinfo
-}
-    },
-mounted() {
-    this.getinfo()
-    ob = new ResizeObserver(debounce(() => {
-        if (document.body.getBoundingClientRect().width < 902) {
-            this.isCollapse = true
-        } else {
-            this.isCollapse = false
+            active.value = value.path
+        })
+        return {
+            isCollapse,
+            routerGo,
+            router,
+            active,
+            getinfo
         }
-    }, 200))
-    ob.observe(document.body)
+    },
+    mounted() {
+        this.getinfo()
+        ob = new ResizeObserver(debounce(() => {
+            if (document.body.getBoundingClientRect().width < 902) {
+                this.isCollapse = true
+            } else {
+                this.isCollapse = false
+            }
+        }, 200))
+        ob.observe(document.body)
 
-},
-unmounted() {
-    ob.disconnect()
-},
+    },
+    unmounted() {
+        ob.disconnect()
+    },
 }
 
 
