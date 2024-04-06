@@ -4,7 +4,7 @@ import Mg from '@/components/profile/Mg.vue';
 import Ceramic from '@/components/profile/Ceramic.vue'
 import { shallowRef } from 'vue';
 import preViewPDF from '@/components/preViewPDF.vue';
-
+import path from 'path-browserify'
 import PDF from "@/assets/PDF.svg"
 // import NoFile from '@/assets/网络不稳定.svg'
 import NoFile from '@/assets/网络不稳定2.png'
@@ -30,8 +30,9 @@ const COLOR = {
 const controller = ref()
 
 async function getFile(url, name, type, index = 0, controller) {
-
+    // console.log(url, name, type, index);
     try {
+
         tableData[index].detail.fileList.push({
             isLoading: true
         })
@@ -39,7 +40,7 @@ async function getFile(url, name, type, index = 0, controller) {
         let contentType = type == 'image' ? ('image/' + a[a.length - 1]) : 'application/pdf'
         // console.log(contentType)
 
-        let res = await fetch('http://localhost:3000/file/' + url, {
+        let res = await fetch(`${baseURL}/file` + url, {
             method: 'GET',
             headers: {
                 'Content-Type': contentType,
@@ -47,22 +48,26 @@ async function getFile(url, name, type, index = 0, controller) {
             },
             signal: controller.value.signal
         })
-
+        // console.log(res);
         // console.log(res.headers)
         let blob = await res.blob()
         // console.log(blob);
         // if (type == 'image') {
         let reader = new FileReader()
-        reader.onload = () => {
-            tableData[index].detail.fileList.pop()
-            tableData[index].detail.fileList.push({
-                url: reader.result,
-                name: name,
-                type: type,
-                isLoading: false
-            })
-        }
-        reader.readAsDataURL(blob)
+        await new Promise((resolve, reject) => {
+            reader.onload = () => {
+                tableData[index].detail.fileList.pop()
+                tableData[index].detail.fileList.push({
+                    url: reader.result,
+                    name: name,
+                    type: type,
+                    isLoading: false
+                })
+                resolve()
+            }
+            reader.readAsDataURL(blob)
+        })
+
         // }
         // else if (type == 'pdf') {
         //     let file = new File([blob], name, { type: contentType })
@@ -75,6 +80,7 @@ async function getFile(url, name, type, index = 0, controller) {
 
 
     } catch (error) {
+        console.log(error)
         tableData[index].detail.fileList.pop()
         tableData[index].detail.fileList.push({
             url: NoFile,
@@ -101,7 +107,7 @@ async function getData() {
             }
         })
         let data = await res.json()
-        console.log(data);
+        // console.log(data);
         if (data.code <= 400) {
             tableData.push(...data.historyList)
             return
@@ -148,10 +154,12 @@ async function showDetail(scope) {
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
     // console.log(showWhatComponentOfDetail.value)
     controller.value = new AbortController()
-    await getFile(1, "1.png", 'image', scope.$index, controller)
-    await getFile(2, "2.png", 'image', scope.$index, controller)
-    await getFile(3, "3.png", 'image', scope.$index, controller)
-    await getFile('pdf', "test.pdf", 'pdf', scope.$index, controller)
+    tableData[scope.$index].detail.fileList = []
+    for await (let item of tableData[scope.$index].files) {
+        // console.log(item);
+        await getFile('/files?fileName=' + item.filename, item.filename, path.extname(item.filename) == '.pdf' ? 'pdf' : 'image', scope.$index, controller)
+        // console.log('结束');
+    }
 
 
 }
@@ -277,7 +285,7 @@ function getFormData(form, tableData) {
                                         <template v-else>
                                             <span
                                                 style="position: absolute;width: 100%;height: max-content;text-align: center;font-size: 1.3em;font-weight: bold;">{{
-                                                    file.name }}</span>
+                                                    file.name.split('.')[file.name.split('.').length-2] }}</span>
                                             <img class="el-upload-list__item-thumbnail" style="transform: scale(0.3);"
                                                 :src="PDF" alt="" />
                                             <span class="el-upload-list__item-actions">
@@ -300,7 +308,7 @@ function getFormData(form, tableData) {
                             }}
                             <el-button type="primary" @click=""
                                 v-if="tableData[showDataIndex].detail.activities.statusIndex == 0">撤回提交</el-button>
-                            
+
                             <el-button type="primary" @click="showForm">关闭</el-button>
                         </div>
                     </div>
