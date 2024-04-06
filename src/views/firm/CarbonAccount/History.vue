@@ -1,6 +1,7 @@
 <script setup>
 import PowerGrid from '@/components/profile/PowerGrid.vue';
 import Mg from '@/components/profile/Mg.vue';
+import Ceramic from '@/components/profile/Ceramic.vue'
 import { shallowRef } from 'vue';
 import preViewPDF from '@/components/preViewPDF.vue';
 
@@ -15,7 +16,8 @@ const isShowDetail = ref(false)
 // 每个导入的资料类型的组件都必须放到这个对象里面，解决被解析后组件变为小写标签
 const componentsObj = {
     'PowerGrid': PowerGrid,
-    'Mg': Mg
+    'Mg': Mg,
+    'Ceramic': Ceramic
 }
 const COLOR = {
     GREEN: "#0bbd87",
@@ -48,6 +50,7 @@ async function getFile(url, name, type, index = 0, controller) {
 
         // console.log(res.headers)
         let blob = await res.blob()
+        // console.log(blob);
         // if (type == 'image') {
         let reader = new FileReader()
         reader.onload = () => {
@@ -92,7 +95,7 @@ async function getFile(url, name, type, index = 0, controller) {
 
 async function getData() {
     try {
-        let res = await fetch(`${baseURL}/firm/history?id=企业1`, {
+        let res = await fetch(`${baseURL}/firm/history?id=ac27fcc1fb5`, {
             headers: {
                 "Content-Type": "application/json",
             }
@@ -223,7 +226,8 @@ function getFormData(form, tableData) {
                 background-color: white;padding: 10px 10px;border-radius: 8px;z-index: 99;">
                     <component :is="showWhatComponentOfDetail" :disabled="true" style="height: 600px;width: 1000px;"
                         :coefficient="tableData[showDataIndex].detail.chooseWhatProvince"
-                        :data="tableData[showDataIndex].detail.data" :form="tableData[showDataIndex].detail.form" :getFormData="getFormData">
+                        :data="tableData[showDataIndex].detail.data" :form="tableData[showDataIndex].detail.form"
+                        :getFormData="getFormData">
                     </component>
                     <div style="display: flex;width: 100%;justify-content: space-between;padding: 10px;">
                         <el-timeline style="min-width: 500px;transform: translateX(80px);">
@@ -292,8 +296,11 @@ function getFormData(form, tableData) {
 
                                 </el-upload>
                             </div>
+                            {{ console.log(showDataIndex, tableData[showDataIndex].detail)
+                            }}
                             <el-button type="primary" @click=""
                                 v-if="tableData[showDataIndex].detail.activities.statusIndex == 0">撤回提交</el-button>
+                            
                             <el-button type="primary" @click="showForm">关闭</el-button>
                         </div>
                     </div>
