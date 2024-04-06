@@ -96,10 +96,11 @@ async function buyCarbonCoin() {
         buying.value = true
         let res = await fetch(`${baseURL}/firm/buy`, {
             method: "POST",
-            body: {
+            body: JSON.stringify({
                 number: buyNumber.value,
-                price: priceChosen.value
-            },
+                price: priceChosen.value,
+                firmId: userInfo.value.detail.id
+            }),
             headers: {
                 "Content-Type": "application/json",
             }
@@ -129,10 +130,11 @@ async function sellCarbonCoin() {
     try {
         let res = await fetch(`${baseURL}/firm/sell`, {
             method: "POST",
-            body: {
+            body: JSON.stringify({
                 number: buyNumber.value,
-                price: priceChosen.value
-            },
+                price: priceChosen.value,
+                firmId: userInfo.value.detail.id
+            }),
             headers: {
                 "Content-Type": "application/json",
             }
@@ -173,7 +175,7 @@ const CBCNumber = ref(0) //CBC数量
 const RMBNumber = ref(0)//人民币数量
 async function getAllMoney() {
     try {
-        let res = await fetch(`${baseURL}/firm/money?id=` + userInfo.value.detail.id, {
+        let res = await fetch(`${baseURL}/firm/money?firmId=` + userInfo.value.detail.id, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
