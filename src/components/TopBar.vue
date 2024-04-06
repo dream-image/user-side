@@ -22,8 +22,8 @@ function logout() {
 <template>
     <div style="padding: 5px 10px;display: flex;position:relative;height: 100%;width: 100%;" id="wrapper">
         <div style="width: 200px;flex-grow:1;display: flex;align-items: center;">
-            <img src="@/assets/CO2.svg" style="height: 100%;" alt="碳币">
-            <span style="font-size: 20px;">碳核算和碳交易系统</span>
+            <img src="@/assets/logo.png" style="height: 100%;" alt="碳币">
+            <span style="font-size: 20px;margin-left:10%;font-family:Apple LiGothic Medium;font-weight:900;">碳核算和碳交易系统</span>
         </div>
         <div
             style="width: 100px;flex-grow:1;display: flex;flex-direction: column;justify-content: right;position:relative;">
