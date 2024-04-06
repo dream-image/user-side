@@ -51,7 +51,7 @@ const pdfRef = ref(null)
 function handleDocumentRender(a) {
     console.log(a)
     isLoading.value = false
-    pageCount.vlaue = pdfRef.pageCount
+    pageCount.value = pdfRef.pageCount
 }
 function handlePasswordRequest(callback, retry) {
     callback(prompt(retry ? '请再次输入密码' : '请输入密码'))

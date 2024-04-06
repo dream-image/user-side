@@ -13,7 +13,7 @@ import PDF from "@/assets/PDF.svg"
 import NoFile from '@/assets/网络不稳定2.png'
 import { ElMessage } from 'element-plus';
 const baseURL = inject("baseURL")
-// const tableData = [
+
 //     {
 //         id: "f1ad2fb4-0325-4287-89f5-ff8bd6f5a704",
 //         name: "无所谓之有限公司",
@@ -211,18 +211,6 @@ async function getFile(url, name, type, index = 0, controller) {
             }
             reader.readAsDataURL(blob)
         })
-
-        // }
-        // else if (type == 'pdf') {
-        //     let file = new File([blob], name, { type: contentType })
-        //     console.log(file)
-        //     tableData[0].detail.fileList.push({
-        //         file: file,
-        //         url: PDF
-        //     })
-        // }
-
-
     } catch (error) {
         console.log(error)
         tableData[index].detail.fileList.pop()
