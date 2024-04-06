@@ -195,29 +195,10 @@ async function getAllMoney() {
     }
 }
 
-async function getMyAndMarketCarbonInfo() {
-    try {
-        let res = await fetch(`${baseURL}/firm/carbonInfo?id=` + userInfo.value.detail.id, {
-            headers: {
-                "Content-Type": "application/json",
-            }
-        })
-        let data = await res.json()
-        if (data.code != 200) {
-            ElMessage.error('请求失败，请检查网络')
-            return
-        }
-        let { user: userCarbonCoinNumberList, carbonCoin: carbonCoinNumberList } = data.data
-        // 用户碳币变化数据以及四种选项的碳币单价变化数据
-    } catch (error) {
-        console.error(error)
-        ElMessage.error('请求失败，请检查网络')
-    }
-}
+
 // 加载完毕获取数据处理
 onMounted(() => {
     getAllMoney()
-    getMyAndMarketCarbonInfo()
 })
 
 
@@ -227,8 +208,27 @@ onMounted(() => {
 
 // 要展示的价格曲线图是24小时，还是1周还是一个月还是一年
 const priceTableDate = ref('24小时')
-
-
+const getCycle = () => {
+    switch (priceTableDate.value) {
+        case '24小时':
+            return 'day'
+            break;
+        case '一周':
+            return 'week'
+            break;
+        case '一月':
+            return 'month'
+            break;
+        case '一年':
+            return 'year'
+        default:
+            return 'day'
+            break;
+    }
+}
+watch(priceTableDate, () => {
+    getCarbonInfo(getCycle)
+})
 
 
 
@@ -242,25 +242,20 @@ import { ElMessage } from 'element-plus';
 const CarboncoinImgDom = ref(null)
 const infoImgDom = ref(null)
 let ob
-onMounted(() => {
-
-    let infoImg
-    let carboncoinImg
-    setTimeout(() => {
-
-        infoImg = echarts.init(infoImgDom.value)
-        infoImg.clear()
-        // 注意：这个初始化一定要确保对应的DOM里面的style没有利用DOM节点数据实时计算大小，不然执行到初始化的时候，实际上节点的style还处于未计算的状态，导致图形大小不正确
-        let base = +new Date(2000, 9, 3);
-        let oneDay = 24 * 3600 * 1000;
-        let date = [];
-        let data = [Math.random() * 300];
-        for (let i = 1; i < 2000; i++) {
-            var now = new Date((base += oneDay));
-            date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-            data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+const infoImg = shallowRef()
+const getFirmCarbonImg = async () => {
+    try {
+        let res = await fetch(`${baseURL}/firm/carbonImg?firmId=` + userInfo.value.detail.id, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        let data = await res.json()
+        if (data.code >= 400) {
+            throw new Error('请求失败，请检查网络')
         }
-        // console.log(data)
+        infoImg.value = echarts.init(infoImgDom.value)
+        infoImg.value.clear()
         let option = {
             animationDuration: function (idx) {
                 // 越往后的数据时长越大
@@ -281,7 +276,7 @@ onMounted(() => {
             },
             title: {
                 left: 'center',
-                text: 'Large Area Chart'
+                text: '我的碳币'
             },
             toolbox: {
                 feature: {
@@ -295,7 +290,7 @@ onMounted(() => {
             xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: date
+                data: data.data.date
             },
             yAxis: {
                 type: 'value',
@@ -331,29 +326,36 @@ onMounted(() => {
                             }
                         ])
                     },
-                    data: data
+                    data: data.data.data
                 },
 
             ]
         };
-        option && infoImg.setOption(option, { lazyUpdate: true });
-    }, 0);
-    setTimeout(() => {
-        carboncoinImg = echarts.init(CarboncoinImgDom.value, null, {
+        option && infoImg.value.setOption(option, { lazyUpdate: true });
+
+    } catch (error) {
+        console.error(error)
+        ElMessage.error(error.message)
+    }
+
+}
+const carboncoinImg = shallowRef()
+const getCarbonInfo = async (cycle) => {
+    try {
+        let res = await fetch(`${baseURL}/firm/carbonInfo?cycle=` + cycle, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        let data = await res.json()
+        if (data.code >= 400) {
+            throw new Error('请求失败，请检查网络')
+        }
+        carboncoinImg.value = echarts.init(CarboncoinImgDom.value, null, {
             renderer: 'svg'
         });
-        carboncoinImg.clear()
-        let base = +new Date(1968, 9, 3);
-        let oneDay = 24 * 3600 * 1000;
-        let date = [];
-        let data = [Math.random() * 300];
-        let data1 = [Math.random() * 300]
-        for (let i = 1; i < 2000; i++) {
-            var now = new Date((base += oneDay));
-            date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-            data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-            data1.push(Math.round((Math.random() - 0.5) * 20 + data1[i - 1]));
-        }
+        carboncoinImg.value.clear()
+
         let option = {
             animationDuration: 2000,
             animationEasing: function (k) {
@@ -374,7 +376,7 @@ onMounted(() => {
             },
             title: {
                 left: 'center',
-                text: 'Large Area Chart'
+                text: ''
             },
             toolbox: {
                 feature: {
@@ -388,7 +390,7 @@ onMounted(() => {
             xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: date
+                data: data.data.date
             },
             yAxis: {
                 type: 'value',
@@ -424,38 +426,44 @@ onMounted(() => {
                             }
                         ])
                     },
-                    data: data
+                    data: data.data.data
                 },
-                // {
-                //     name: 'Fake Data',
-                //     type: 'line',
-                //     symbol: 'none',
-                //     sampling: 'lttb',
-                //     itemStyle: {
-                //         color: 'rgb(255, 70, 131)'
-                //     },
-                //     areaStyle: {
-                //         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                //             {
-                //                 offset: 0,
-                //                 color: 'rgb(255, 158, 68)'
-                //             },
-                //             {
-                //                 offset: 1,
-                //                 color: 'rgb(255, 70, 131)'
-                //             }
-                //         ])
-                //     },
-                //     data: data1
-                // }
             ]
         };
-        option && carboncoinImg.setOption(option, { lazyUpdate: true });
+        option && carboncoinImg.value.setOption(option, { lazyUpdate: true });
 
-    }, 0);
+    } catch (error) {
+        console.log(error)
+        ElMessage.error(error.message)
+    }
+}
+const priceCompare = ref()
+const getPriceCompareToYesterday = async () => {
+    try {
+        let res = await fetch(`${baseURL}/firm/priceCompare`, {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+        let data = await res.json()
+        if (data.code >= 400) {
+            throw new Error('请求失败，请检查网络')
+        }
+        priceCompare.value = data.data
+    } catch (error) {
+        console.log(error)
+        ElMessage.error(error.message)
+    }
+}
+onMounted(() => {
+    getPriceCompareToYesterday()
+    getFirmCarbonImg()
+
+    getCarbonInfo('day')
+
     setTimeout(() => {
         ob = new ResizeObserver(debounce(() => {
-            infoImg.resize({
+            infoImg.value.resize({
                 animation: {
                     duration: 2000,
                     animationEasing: function (k) {
@@ -463,7 +471,7 @@ onMounted(() => {
                     },
                 }
             })
-            carboncoinImg.resize({
+            carboncoinImg.value.resize({
                 animation: {
                     duration: 2000,
                     animationEasing: function (k) {
@@ -476,7 +484,7 @@ onMounted(() => {
 
         })
         ob.observe(document.body)
-    }, 100);
+    }, 1000);
 
 })
 
@@ -566,7 +574,7 @@ onUnmounted(() => {
             </div>
             <!-- 上部个人资产变化图 -->
             <div style="grid-area: bottom;padding: 5px;" class=" border-solid border-slate-300 border">
-                <span style="position: absolute;font-size: 18px;">我的碳币</span>
+                <!-- <span style="position: absolute;font-size: 18px;">我的碳币</span> -->
                 <div style="width: 100%;height: 100%;overflow: hidden;" ref="infoImgDom">
                     <!-- 这里放echarts的图 -->
 
@@ -664,9 +672,9 @@ onUnmounted(() => {
                 <div class="statistic-footer">
                     <div class="footer-item">
                         <span>相比昨日</span>
-                        <span class="green">
+                        <span :class="/-/.test(priceCompare) ? 'green' : 'red'">
                             <!-- 这里green是升，red是降 -->
-                            24%
+                            {{ priceCompare }}%
                             <el-icon>
                                 <CaretTop />
                             </el-icon>
