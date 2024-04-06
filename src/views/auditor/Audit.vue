@@ -161,8 +161,8 @@ const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
 const tableWrapperDom = ref(null)
 const tableData = reactive([])
-
-
+const rejectDialogVisible = ref(false)
+const rejectReason = ref('')
 const COLOR = {
     GREEN: "#0bbd87",
     RED: "rgb(245,108,108)",
@@ -261,7 +261,9 @@ const showDataIndex = ref(0)
 //点击查看详细处理
 async function showDetail(scope) {
     // console.log(scope)
-
+    wait.value = {
+        ...Promise.withResolvers()
+    }
     isShowDetail.value = !isShowDetail.value
     showDataIndex.value = scope.$index
     showWhatComponentOfDetail.value = componentsObj[tableData[scope.$index].detail.mode]
@@ -284,14 +286,25 @@ function showForm() {
     tableData[showDataIndex.value].detail.fileList = []
 
 }
+const wait = ref({
+    ...Promise.withResolvers()
+})
+const submitNoPass = async (firmId) => {
+    wait.value.resolve()
+}
+const audit = async (firmId, isPass) => {
 
-
-const passAudit = async (firmId) => {
     try {
-        let res = await fetch(`${baseURL}/auditor/pass`, {
+        if (!isPass) {
+            rejectDialogVisible.value = true
+        }
+        await wait.value.promise
+        let res = await fetch(`${baseURL}/auditor/audit`, {
             method: 'POST',
             body: JSON.stringify({
-                firmId: firmId
+                firmId: firmId,
+                isPass: isPass,
+                rejectReason: rejectReason.value,
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -304,7 +317,7 @@ const passAudit = async (firmId) => {
         window.location.reload()
     } catch (error) {
         console.log(error);
-        ElMessage.error(error.message)
+        // ElMessage.error(error.message)
     }
 
 
@@ -317,7 +330,7 @@ const tableRowClassNameByState = ({
 }) => {
     if (row.status === "通过") {
         return 'green'
-    } else if (row.status === '不通过') {
+    } else if (row.status === '未通过') {
         return 'red'
     } else if (row.status === '待审核') {
         return 'yellow'
@@ -451,8 +464,13 @@ function getFormData(form, tableData) {
 
                                 </el-upload>
                             </div>
-                            <el-button type="primary" @click="passAudit(tableData[showDataIndex].firmId)"
-                                v-if="tableData[showDataIndex].detail.activities.statusIndex == 0">通过</el-button>
+                            <el-button type="primary" @click="() => {
+                                wait.resolve()
+                                audit(tableData[showDataIndex].firmId, true)
+                            }" v-if="tableData[showDataIndex].detail.activities.statusIndex == 0">通过</el-button>
+                            <el-button type="primary" @click="() => {
+                                audit(tableData[showDataIndex].firmId, false)
+                            }" v-if="tableData[showDataIndex].detail.activities.statusIndex == 0">未通过</el-button>
                             <el-button type="primary" @click="showForm">关闭</el-button>
                         </div>
                     </div>
@@ -470,6 +488,21 @@ function getFormData(form, tableData) {
                 </el-dialog>
             </div>
         </teleport>
+        <el-dialog v-model="rejectDialogVisible" title="请说明原因" width="500">
+            <el-input v-model="rejectReason" type="textarea" :rows="3" placeholder="请输入内容" maxlength="20" />
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="() => {
+                        rejectDialogVisible = false
+                        rejectReason = ''
+                        wait.reject()
+                    }">取消</el-button>
+                    <el-button type="primary" @click="submitNoPass">
+                        确认
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
     </div>
 </template>
 

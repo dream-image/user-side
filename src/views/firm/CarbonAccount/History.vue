@@ -132,7 +132,7 @@ const tableRowClassNameBystatus = ({
 }) => {
     if (row.status === "通过") {
         return 'green'
-    } else if (row.status === '不通过') {
+    } else if (row.status === '未通过') {
         return 'red'
     } else if (row.status === '待审核') {
         return 'yellow'

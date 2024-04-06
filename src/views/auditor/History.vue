@@ -286,21 +286,6 @@ function showForm() {
 }
 
 
-const passAudit = async (firmId) => {
-
-    let res = await fetch(`${baseURL}/auditor/pass`, {
-        method: 'POST',
-        body: JSON.stringify({
-            firmId: firmId
-        }),
-        headers: {
-            "Content-Type": "application/json",
-        }
-    })
-    let data = await res.json()
-
-
-}
 
 
 const tableRowClassNameByState = ({
@@ -309,7 +294,7 @@ const tableRowClassNameByState = ({
 }) => {
     if (row.status === "通过") {
         return 'green'
-    } else if (row.status === '不通过') {
+    } else if (row.status === '未通过') {
         return 'red'
     } else if (row.status === '待审核') {
         return 'yellow'

@@ -340,7 +340,7 @@ function rowClick(row, column, event) {
 onMounted(() => {
     if (props.form.length > 0) {
         for (let i = 0; i < props.form.length; i++) {
-            tableData[i].consumption = props.form[i]
+            tableData[i] = props.form[i]
         }
     }
     // console.log(data.value)
@@ -349,6 +349,9 @@ onMounted(() => {
 
 
 watchEffect(() => {
+    if (props.disabled) {
+        return
+    }
     let E燃烧 = tableData.reduce((pre, cur) => {
         return pre + 1 * cur.eGeneratingCapacity * cur.consumption * cur.oxidationRate * cur.carbonContent * (11 / 3)
     }, 0)
@@ -356,7 +359,7 @@ watchEffect(() => {
     let E过程 = 0.98 * 0.478 * form.D白云石
     let E电和热 = form.AD电量 * props.coefficient + form.AD热量 * 0.11
     form.tCO2 = (E燃烧 + E原材料 + E过程 + E电和热).toFixed(4) * 1
-    props.getFormData(form,tableData)
+    props.getFormData(form, tableData)
 })
 
 
@@ -440,7 +443,7 @@ function changeTableEdit(scope, e = undefined) {
                                     scope.row.consumption }}</h1>
                             <h1 v-else-if="!scope.row.editing && scope.row.consumption == ''"
                                 style="opacity: 0.4;width: 100%;height: 100%;display:block;"
-                                @click="changeTableEdit(scope, $event)">待填</h1>
+                                @click="changeTableEdit(scope, $event)">{{ props.disabled ? '未填' : '待填' }}</h1>
                             <el-input v-else v-model="scope.row.consumption" style="height: 23px;display: flex;margin: 0;"
                                 placeholder="净消耗量" step="0.0001" type="number" @blur="changeTableEdit(scope)" size="small"
                                 @key.enter="changeTableEdit(scope)" :min="0" clearable :disabled="props.disabled"
