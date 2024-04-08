@@ -138,6 +138,8 @@ const tableRowClassNameBystatus = ({
         return 'yellow'
     } else if (row.status === '已取消') {
         return 'gray'
+    } else if (row.status === '被驳回') {
+        return 'deepRed'
     }
 }
 
@@ -285,7 +287,7 @@ function getFormData(form, tableData) {
                                         <template v-else>
                                             <span
                                                 style="position: absolute;width: 100%;height: max-content;text-align: center;font-size: 1.3em;font-weight: bold;">{{
-                                                    file.name.split('.')[file.name.split('.').length-2] }}</span>
+                                                    file.name.split('.')[file.name.split('.').length - 2] }}</span>
                                             <img class="el-upload-list__item-thumbnail" style="transform: scale(0.3);"
                                                 :src="PDF" alt="" />
                                             <span class="el-upload-list__item-actions">

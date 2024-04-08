@@ -18,6 +18,11 @@
     color: var(--el-color-info);
 }
 
+.deepRed {
+    color: #ee1717;
+    text-shadow: 0 0 1px #ff0000;
+}
+
 .white {
     color: #909399
 }

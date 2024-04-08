@@ -336,6 +336,8 @@ const tableRowClassNameByState = ({
         return 'yellow'
     } else if (row.status === '已取消') {
         return 'gray'
+    } else if (row.status === '被驳回') {
+        return 'deepRed'
     }
 }
 
