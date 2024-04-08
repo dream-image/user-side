@@ -488,8 +488,8 @@ function getFormData(form, tableData) {
                 </el-dialog>
             </div>
         </teleport>
-        <el-dialog v-model="rejectDialogVisible" title="请说明原因" width="500">
-            <el-input v-model="rejectReason" type="textarea" :rows="3" placeholder="请输入内容" maxlength="20" />
+        <el-dialog v-model="rejectDialogVisible" title="您确定要拒绝该报告吗？" width="500">
+            <el-input v-model="rejectReason" type="textarea" :rows="3" placeholder="请输入理由" maxlength="20" />
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="() => {
