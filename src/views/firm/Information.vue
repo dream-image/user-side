@@ -51,7 +51,6 @@ async function getinfo() {
         let data = await res.json()
         if(data.code>=400){
             ElMessage.error(data.message)
-            router.replace({ path: "/login" })
             return
         }
         let { name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id } = data.data
