@@ -10,10 +10,10 @@ export const useUserInfoStore = defineStore('userInfo', () => {
     hasPass: false,//是否已经审核通过  如果这个是true，那么auditing必为false
     detail: {},
     authority:{
-      submit:true,//提交报告权限
-      buy:true,//购买权限
-      sell:true,//出售权限
-      audit:true,//审核权限
+      submit:false,//提交报告权限
+      buy:false,//购买权限
+      sell:false,//出售权限
+      audit:false,//审核权限
     }
   })
   function updateUserInfo(data) {

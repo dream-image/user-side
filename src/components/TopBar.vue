@@ -20,7 +20,7 @@ function logout() {
 </script>
 
 <template>
-    <div style="padding: 5px 10px;display: flex;position:relative;height: 100%;width: 100%;" id="wrapper">
+    <div style="padding: 5px 10px;display: flex;position:relative;height: 100%;width: 100%;min-width: 1091px;" id="wrapper">
         <div style="width: 200px;flex-grow:1;display: flex;align-items: center;">
             <img src="@/assets/logo.png" style="height: 100%;" alt="碳币">
             <span style="font-size: 20px;margin-left:10%;font-family:Apple LiGothic Medium;font-weight:900;">碳核算和碳交易系统</span>

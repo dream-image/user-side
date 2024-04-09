@@ -7,6 +7,7 @@ import debounce from '@/utils/debounce.js'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
+import { ElMessage } from 'element-plus'
 
 let ob
 export default {
@@ -26,8 +27,13 @@ export default {
                         'Content-Type': 'application/json',
                     }
                 })
-                let { name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id, auditing, hasPass } = await res.json()
-
+                let data = await res.json()
+                if (data.code >= 400) {
+                    ElMessage.error(data.message)
+                    router.replace({ path: "/login" })
+                    return
+                }
+                const { name, profession, legal_representative, contact_info, corporate_nature, code, reporting_responsible_person, id, auditing, hasPass, buy, sell, submit } = data.data
                 updateUserInfo({
                     detail: {
                         name, profession,
@@ -37,10 +43,13 @@ export default {
                         reportingResponsiblePerson: reporting_responsible_person,
                         code,
                         id,
-
                     },
                     auditing,
-                    hasPass
+                    hasPass,
+                    authority: {
+                        ...userInfo.value.authority,
+                        buy, sell, submit
+                    }
 
                 })
             } catch (error) {
