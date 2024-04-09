@@ -20,11 +20,11 @@ const { userInfo } = storeToRefs(useUserInfoStore())
 const { updateUserInfo } = useUserInfoStore()
 const info = computed(() => userInfo.value.detail)
 const form = ref({
-    ...toRaw(userInfo.value.detail)
+    ...JSON.parse(JSON.stringify(toRaw(userInfo.value.detail)))
 })
 
 watchEffect(() => {
-    form.value = toRaw(userInfo.value.detail);
+    form.value = JSON.parse(JSON.stringify(toRaw(userInfo.value.detail)))
 });
 // id: "",
 //     name: "",

@@ -93,6 +93,10 @@ const buying = ref(false)//是否正在购买
 // 购买碳币
 async function buyCarbonCoin() {
     try {
+        if (!userInfo.value.authority.buy) {
+            ElMessage.error('您的购买行为已被禁止，请联系管理员')
+            return
+        }
         buying.value = true
         let res = await fetch(`${baseURL}/firm/buy`, {
             method: "POST",
@@ -602,7 +606,7 @@ onUnmounted(() => {
                                 <span style="position: absolute;top: 2px;left: 5px;font-size: 13px;">价格</span>
                                 <div style="transform: translateY(5px);width: 80%;">
                                     <el-select v-model="priceChosen" filterable remote placeholder="查询市场价"
-                                        remote-show-suffix :remote-method="searchPrice" :loading="loading"
+                                        remote-show-suffix :remote-method="searchPrice" :loading="loading" clearable
                                         loading-text="加载中" style="width: 100%;" size="small" class="removeBorder">
                                         <el-option v-for="item in options" :key="item.value" :label="item.label"
                                             :value="item.value" />
@@ -619,7 +623,7 @@ onUnmounted(() => {
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <el-button type="primary" size="large" style="width: 80%;" @click="buyCarbonCoin"
-                                    :disabled="buying">购买</el-button>
+                                    :disabled="buying || (!priceChosen || !buyNumber)">购买</el-button>
                             </div>
                         </div>
                     </el-tab-pane>
@@ -652,7 +656,7 @@ onUnmounted(() => {
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <el-button type="primary" size="large" style="width: 80%;" @click="sellCarbonCoin"
-                                    :disabled="selling">托管出售</el-button>
+                                    :disabled="selling || (!sellPrice || !sellNumber)">托管出售</el-button>
                             </div>
                         </div>
                     </el-tab-pane>

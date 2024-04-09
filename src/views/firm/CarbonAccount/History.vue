@@ -107,7 +107,7 @@ async function getData() {
             }
         })
         let data = await res.json()
-        // console.log(data);
+        console.log(data);
         if (data.code <= 400) {
             tableData.push(...data.historyList)
             return
@@ -157,6 +157,7 @@ async function showDetail(scope) {
     // console.log(showWhatComponentOfDetail.value)
     controller.value = new AbortController()
     tableData[scope.$index].detail.fileList = []
+    
     for await (let item of tableData[scope.$index].files) {
         // console.log(item);
         await getFile('/files?fileName=' + item.filename, item.filename, path.extname(item.filename) == '.pdf' ? 'pdf' : 'image', scope.$index, controller)

@@ -6,6 +6,7 @@ import preViewPDF from '@/components/preViewPDF.vue';
 import { ElMessageBox, ElMessage, dayjs } from 'element-plus'
 import auditingPicture from '@/assets/审核中.svg'
 import hasPassPicture from '@/assets/没有找到相关结果.svg'
+import noAuthority from '@/assets/无权限.svg'
 import { useUserInfoStore } from "@/stores/user"
 import { storeToRefs } from "pinia";
 import { Delete, Download, Plus, ZoomIn, Close } from '@element-plus/icons-vue'
@@ -355,7 +356,8 @@ function showPDF(url) {
 <template>
     <el-empty v-if="userInfo.auditing" :image="auditingPicture" description="您已经有报告在审核中，请等待审核结果" />
     <el-empty v-else-if="userInfo.hasPass" :image="hasPassPicture" description="您今年的报告已通过，不用再重复提交" />
-
+    <el-empty v-else-if="!userInfo.authority.submit" :image="noAuthority"
+        description="抱歉，您已被禁止提交报告,请联系管理员" />
     <div style="height: 100%;width: 100%;position: relative;min-width: 835px;" v-else>
         <div style="position: absolute;display: flex;flex-direction: column;gap: 8px;width: 98%;">
             <span style="font-size: 20px;">提交资料</span>
