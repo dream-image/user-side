@@ -218,22 +218,18 @@ const getCycle = () => {
     switch (priceTableDate.value) {
         case '24小时':
             return 'day'
-            break;
         case '一周':
             return 'week'
-            break;
         case '一月':
             return 'month'
-            break;
         case '一年':
             return 'year'
         default:
             return 'day'
-            break;
     }
 }
 watch(priceTableDate, () => {
-    getCarbonInfo(getCycle)
+    getCarbonInfo(getCycle())
 })
 
 
@@ -300,7 +296,7 @@ const getFirmCarbonImg = async () => {
             },
             yAxis: {
                 type: 'value',
-                boundaryGap: [0, '100%']
+                // boundaryGap: [0, '100%']
             },
             // dataZoom: [
             //     {
@@ -400,7 +396,7 @@ const getCarbonInfo = async (cycle) => {
             },
             yAxis: {
                 type: 'value',
-                boundaryGap: [0, '100%']
+                // boundaryGap: [0, '100%']
             },
             // dataZoom: [
             //     {
