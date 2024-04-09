@@ -94,7 +94,7 @@ const tableData = reactive([
         eGeneratingCapacity: "20.304",
         carbonContent: "27.49",
         oxidationRate: "0.94",
-        consumption: "12",
+        consumption: "",
         editing: false
     },
     {
