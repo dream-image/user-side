@@ -9,6 +9,9 @@ import PDF from "@/assets/PDF.svg"
 // import NoFile from '@/assets/网络不稳定.svg'
 import NoFile from '@/assets/网络不稳定2.png'
 import { ElMessage } from 'element-plus';
+import { useUserInfoStore } from "@/stores/user"
+import { storeToRefs } from "pinia";
+const { userInfo } = storeToRefs(useUserInfoStore())
 const baseURL = inject("baseURL")
 const showWhatComponentOfDetail = shallowRef('')
 const isShowDetail = ref(false)
@@ -98,23 +101,28 @@ async function getFile(url, name, type, index = 0, controller) {
         console.log(error.message)
     }
 }
-
+const isLoading = ref(false)
 async function getData() {
     try {
-        let res = await fetch(`${baseURL}/firm/history?id=ac27fcc1fb5`, {
+        isLoading.value = true
+        let res = await fetch(`${baseURL}/firm/history?id=${userInfo.value.detail.id}`, {
             headers: {
                 "Content-Type": "application/json",
             }
         })
         let data = await res.json()
         console.log(data);
-        if (data.code <= 400) {
-            tableData.push(...data.historyList)
-            return
+        if (data.code >= 400) {
+            throw new Error(data.message)
+
         }
-        ElMessage.error(data.message)
+        tableData.push(...data.historyList)
+
     } catch (error) {
         console.log(error.message)
+        ElMessage.error(data.message)
+    } finally {
+        isLoading.value = false
     }
 }
 
@@ -157,7 +165,7 @@ async function showDetail(scope) {
     // console.log(showWhatComponentOfDetail.value)
     controller.value = new AbortController()
     tableData[scope.$index].detail.fileList = []
-    
+
     for await (let item of tableData[scope.$index].files) {
         // console.log(item);
         await getFile('/files?fileName=' + item.filename, item.filename, path.extname(item.filename) == '.pdf' ? 'pdf' : 'image', scope.$index, controller)
@@ -212,7 +220,7 @@ function getFormData(form, tableData) {
 
         <!-- 下面展示表格 -->
         <div style="position: absolute;top: 70px;width: 98%;height: 90%;" class=" border-solid border-slate-300 border">
-            <el-table :data="tableData" stripe style="width: 100%;" lazy empty-text="没有记录"
+            <el-table :data="tableData" stripe style="width: 100%;" lazy empty-text="没有记录" v-loading="isLoading"
                 :row-class-name="tableRowClassNameBystatus" max-height="100%">
 
                 <el-table-column prop="id" label="企业id" width="180" show-overflow-tooltip />

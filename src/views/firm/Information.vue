@@ -26,14 +26,6 @@ const form = ref({
 watchEffect(() => {
     form.value = JSON.parse(JSON.stringify(toRaw(userInfo.value.detail)))
 });
-// id: "",
-//     name: "",
-//     profession: "",
-//     legalRepresentative: "",
-//     contactInfo: "",
-//     corporateNature: "",
-//     reportingResponsiblePerson: "",
-//     code: "",
 
 const isShowForm = ref(false)
 function showForm() {
@@ -73,9 +65,6 @@ async function getinfo() {
 
 onMounted(() => {
     getinfo()
-})
-onUnmounted(() => {
-
 })
 
 
