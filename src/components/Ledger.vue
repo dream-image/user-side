@@ -1,4 +1,7 @@
 <script setup>
+import { useUserInfoStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+const { userInfo } = storeToRefs(useUserInfoStore())
 
 const isShowLedger = defineModel("isShowLedger", { type: Boolean, default: false })
 function showLedger() {
@@ -205,13 +208,13 @@ const tableData = reactive(
 )
 async function getData() {
     try {
-        let res = await fetch(`${baseURL}/firm/ledger`, {
+        let res = await fetch(`${baseURL}/firm/ledger?id=`+ userInfo.value.detail.id, {
             headers: {
                 "Content-Type": "application/json",
             }
         })
         let data = await res.json()
-        tableData.push(...data)
+        tableData.push(...data.data)
     } catch (error) {
         console.log(error.message)
     }
