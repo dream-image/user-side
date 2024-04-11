@@ -135,8 +135,8 @@ async function sellCarbonCoin() {
         let res = await fetch(`${baseURL}/firm/sell`, {
             method: "POST",
             body: JSON.stringify({
-                number: buyNumber.value,
-                price: priceChosen.value,
+                quantity: sellNumber.value,
+                price: sellPrice.value,
                 firmId: userInfo.value.detail.id
             }),
             headers: {
@@ -146,6 +146,7 @@ async function sellCarbonCoin() {
         let data = await res.json()
         if (data.code === 200) {
             ElMessage.success('托管成功')
+            getAllMoney()
             // 下面是购买成功的逻辑
 
         }
