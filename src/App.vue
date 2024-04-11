@@ -13,10 +13,9 @@ const baseURL = inject("baseURL")
 </script>
 
 <template>
-  <!-- 登陆页 -->
-  <Login :url="baseURL + '/login'" v-if="!userInfo.isLogin"
-    :developerMode="{ 'isDeveloper': true, 'identity': 'firm' }">
-  </Login>
+  <!-- 登录页 -->
+  <Login :url="baseURL + '/login'" v-if="!userInfo.isLogin" :developerMode="{ 'isDeveloper': true, 'identity': 'firm' }">
+  </Login >
   <!-- {'isDeveloper':true,'identity':'firm'} 传入这个后直接点击登录即可，identity如果是firm就进入企业页面 如果是 auditor就进入审核员页面 -->
   <transition mode="out-in" name="fade">
     <div v-if="userInfo.isLogin">
@@ -38,11 +37,10 @@ const baseURL = inject("baseURL")
       </div>
     </div>
   </transition>
-
-
 </template>
 
 <style scoped>
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;

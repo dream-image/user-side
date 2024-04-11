@@ -40,7 +40,7 @@ function logout() {
                         v-if="userInfo.identity === 'auditor'">
                     <div style="position: absolute;width: 200%;height: 100%;transform: translateX(-25%);" id="logout">
                         <el-button type="primary" size="small" style="width:100%;height: 80%;"
-                            @click="logout">退出登陆</el-button>
+                            @click="logout">退出登录</el-button>
                     </div>
                 </div>
             </div>
