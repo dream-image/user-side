@@ -102,7 +102,7 @@ async function buyCarbonCoin() {
             method: "POST",
             body: JSON.stringify({
                 number: buyNumber.value,
-                price: priceChosen.value,
+                index: priceChosen.value,
                 firmId: userInfo.value.detail.id
             }),
             headers: {
@@ -606,7 +606,7 @@ onUnmounted(() => {
                                         remote-show-suffix :remote-method="searchPrice" :loading="loading" clearable
                                         loading-text="加载中" style="width: 100%;" size="small" class="removeBorder">
                                         <el-option v-for="item in options" :key="item.value" :label="item.label"
-                                            :value="item.value" />
+                                            :value="item.index" />
                                     </el-select>
                                 </div>
                             </div>
@@ -620,7 +620,7 @@ onUnmounted(() => {
                             <div style="height: 50px;position: relative;display: flex;align-items: center;justify-content: center;"
                                 class="border-solid border-slate-300 border">
                                 <el-button type="primary" size="large" style="width: 80%;" @click="buyCarbonCoin"
-                                    :disabled="buying || (!priceChosen || !buyNumber)">购买</el-button>
+                                    :disabled="buying || (!buyNumber)">购买</el-button>
                             </div>
                         </div>
                     </el-tab-pane>
