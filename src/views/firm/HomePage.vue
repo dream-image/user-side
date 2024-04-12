@@ -112,6 +112,7 @@ async function buyCarbonCoin() {
         let data = await res.json()
         if (data.code === 200) {
             ElMessage.success('购买成功')
+            getAllMoney(false)
             // 下面是购买成功的逻辑
 
         }
@@ -146,7 +147,7 @@ async function sellCarbonCoin() {
         let data = await res.json()
         if (data.code === 200) {
             ElMessage.success('托管成功')
-            getAllMoney()
+            getAllMoney(true)
             // 下面是购买成功的逻辑
 
         }
@@ -176,9 +177,9 @@ async function getCarbonPriceList() {
     loading.value = false
 }
 
-const CBCNumber = ref(0) //CBC数量
-const RMBNumber = ref(0)//人民币数量
-async function getAllMoney() {
+var CBCNumber = ref(0) //CBC数量
+var RMBNumber = ref(0)//人民币数量
+async function getAllMoney(isbuy) {
     try {
         let res = await fetch(`${baseURL}/firm/money?firmId=` + userInfo.value.detail.id, {
             method: "GET",
@@ -192,9 +193,9 @@ async function getAllMoney() {
             return
         }
         let { RMB, CBC, averageCBCPrice } = data.data
-        source.value = RMB + CBC * averageCBCPrice//总资产
+        RMBNumber = isbuy? RMB : RMB-3200
+        source.value = RMBNumber + CBC * averageCBCPrice//总资产
         CBCNumber.value = CBC
-        RMBNumber.value = RMB
         averagePriceOfCBC.value = averageCBCPrice
     } catch (error) {
         console.error(error)
@@ -205,7 +206,7 @@ async function getAllMoney() {
 
 // 加载完毕获取数据处理
 onMounted(() => {
-    getAllMoney()
+    getAllMoney(true)
 })
 
 

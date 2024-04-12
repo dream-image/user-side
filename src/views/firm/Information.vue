@@ -145,7 +145,7 @@ async function onSubmit() {
             <span style="position: absolute;left: 10px;top: 5px;font-size: 18px;">钱包</span>
             <div style="width: 200px;height: 100%;align-items: center;display: flex;">
                 <ItemBox :src="COIN" alt="币" style="height: 45px;width: 45px;margin-right: 5px;"></ItemBox>
-                <span>123,412.00 CBC</span>
+                <span>100 CBC</span>
                 <!-- 这里需要填写已有碳币数量 -->
             </div>
             <div style="width: 200px;height: 100%;align-items: center;display: flex;">
